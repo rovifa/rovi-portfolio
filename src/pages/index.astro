@@ -1,6 +1,9 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import CaseStudyCard from "../components/CaseStudyCard.astro";
+import Icon from "../components/Icon.astro";
+import profileImg from "../assets/profile.png";
 
 const caseStudies = [
   {
@@ -12,6 +15,7 @@ const caseStudies = [
     metricValue: "100+",
     metricLabel: "TPS throughput",
     size: "featured",
+    tags: ["gRPC", "Redis", "OpenTelemetry"],
   },
   {
     href: "/case-studies/platform-library",
@@ -22,6 +26,7 @@ const caseStudies = [
     metricValue: "12+",
     metricLabel: "Service produksi",
     size: "wide",
+    tags: ["gRPC", "Firestore", "OpenTelemetry"],
   },
   {
     href: "/case-studies/mambu-estatement",
@@ -56,44 +61,84 @@ const caseStudies = [
 
 <Layout title="Rovi Fauzan Akbar — Backend Engineer Portfolio">
   <section class="hero reveal">
-    <h1>Rovi Fauzan Akbar</h1>
-    <p class="hero-tagline">
-      Saya membangun sistem backend yang menjaga uang tetap bergerak dengan
-      aman dan tepat waktu. Selama hampir 8 tahun berkarir, 5 tahun terakhir
-      saya fokus di sistem finansial — mulai dari fintech hingga perbankan —
-      mencakup sistem pembayaran, integrasi core banking, dan observability
-      untuk transaksi berskala tinggi.
-    </p>
-    <div class="hero-stats">
-      <div class="stat-chip">
-        <span class="stat-value">~8</span>
-        <span class="stat-label">Tahun Pengalaman</span>
+    <div class="hero-grid">
+      <div class="hero-content">
+        <h1>Rovi Fauzan Akbar</h1>
+        <p class="hero-tagline">
+          Saya membangun sistem backend yang menjaga uang tetap bergerak
+          dengan aman dan tepat waktu. Selama hampir 8 tahun berkarir, 5
+          tahun terakhir saya fokus di sistem finansial — mulai dari
+          fintech hingga perbankan — mencakup sistem pembayaran, integrasi
+          core banking, dan observability untuk transaksi berskala tinggi.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-chip">
+            <span class="stat-value">~8</span>
+            <span class="stat-label">Tahun Pengalaman</span>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-value">{caseStudies.length}</span>
+            <span class="stat-label">Studi Kasus</span>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="/cv.pdf" download>
+            <Icon name="download" />
+            Download CV
+          </a>
+          <a class="btn btn-outline" href="#studi-kasus">
+            Lihat Studi Kasus
+            <Icon name="arrow-right" />
+          </a>
+        </div>
+        <div class="contact-row">
+          <a
+            class="icon-btn"
+            href="mailto:rovifauzan95@gmail.com"
+            aria-label="Kirim email ke rovifauzan95@gmail.com"
+          >
+            <Icon name="mail" />
+            <span>Email</span>
+          </a>
+          <button
+            type="button"
+            class="icon-btn copy-btn"
+            data-copy="rovifauzan95@gmail.com"
+            aria-label="Salin alamat email"
+          >
+            <Icon name="copy" />
+          </button>
+          <a
+            class="icon-btn"
+            href="https://www.linkedin.com/in/rovi-fauzan-akbar"
+            target="_blank"
+            rel="noopener"
+            aria-label="Kunjungi profil LinkedIn Rovi Fauzan Akbar"
+          >
+            <Icon name="linkedin" />
+            <span>LinkedIn</span>
+          </a>
+          <span class="location-badge">
+            <Icon name="map-pin" />
+            Bandung, Indonesia
+          </span>
+        </div>
       </div>
-      <div class="stat-chip">
-        <span class="stat-value">{caseStudies.length}</span>
-        <span class="stat-label">Studi Kasus</span>
+      <div class="hero-photo">
+        <div class="profile-photo-frame">
+          <Image
+            src={profileImg}
+            width={240}
+            height={240}
+            loading="eager"
+            alt="Foto Rovi Fauzan Akbar"
+          />
+        </div>
       </div>
-    </div>
-    <div class="contact-row">
-      <span class="contact-email">
-        <a href="mailto:rovifauzan95@gmail.com">rovifauzan95@gmail.com</a>
-        <button
-          type="button"
-          class="copy-btn"
-          data-copy="rovifauzan95@gmail.com"
-          aria-label="Salin alamat email">📋</button
-        >
-      </span>
-      <a
-        href="https://www.linkedin.com/in/rovi-fauzan-akbar"
-        target="_blank"
-        rel="noopener">LinkedIn</a
-      >
-      <span>Bandung, Indonesia</span>
     </div>
   </section>
 
-  <h2>Ringkasan</h2>
+  <h2 class="section-title">Ringkasan</h2>
   <p>
     Backend engineer dengan fokus pada Go, gRPC, Kafka, dan observability
     (OpenTelemetry, Grafana, Loki, Tempo, Prometheus). Delapan tahun terakhir
@@ -104,7 +149,7 @@ const caseStudies = [
     eksplorasi bagaimana RAG bisa mengotomasi sebagian siklus development.
   </p>
 
-  <h2 id="pengalaman">Pengalaman Kerja</h2>
+  <h2 id="pengalaman" class="section-title">Pengalaman Kerja</h2>
 
   <div class="timeline">
   <div class="job reveal">
@@ -245,7 +290,7 @@ const caseStudies = [
   </div>
   </div>
 
-  <h2 id="studi-kasus">Studi Kasus</h2>
+  <h2 id="studi-kasus" class="section-title">Studi Kasus</h2>
   <div class="case-grid">
     {
       caseStudies.map((cs) => (
@@ -257,44 +302,65 @@ const caseStudies = [
           metricValue={cs.metricValue}
           metricLabel={cs.metricLabel}
           size={cs.size}
+          tags={cs.tags}
         />
       ))
     }
   </div>
 
-  <h2>Skills</h2>
+  <h2 class="section-title">Skills</h2>
   <dl class="skills-list">
     <dt>Bahasa & Framework</dt>
-    <dd>Go (Golang), PHP (Laravel, CodeIgniter), Swift/SwiftUI</dd>
+    <dd class="tags">
+      <span class="tag">Go (Golang)</span><span class="tag"
+        >PHP (Laravel, CodeIgniter)</span
+      ><span class="tag">Swift/SwiftUI</span>
+    </dd>
     <dt>Sistem & Arsitektur</dt>
-    <dd>
-      Microservices, Clean Architecture, RESTful API, gRPC, System Design,
-      API Integration
+    <dd class="tags">
+      <span class="tag">Microservices</span><span class="tag"
+        >Clean Architecture</span
+      ><span class="tag">RESTful API</span><span class="tag">gRPC</span><span
+        class="tag">System Design</span
+      ><span class="tag">API Integration</span>
     </dd>
     <dt>Data & Messaging</dt>
-    <dd>PostgreSQL, MySQL, Redis, Apache Kafka, Google Cloud Pub/Sub</dd>
+    <dd class="tags">
+      <span class="tag">PostgreSQL</span><span class="tag">MySQL</span><span
+        class="tag">Redis</span
+      ><span class="tag">Apache Kafka</span><span class="tag"
+        >Google Cloud Pub/Sub</span
+      >
+    </dd>
     <dt>Observability</dt>
-    <dd>
-      OpenTelemetry, Distributed Tracing, Grafana, Jaeger/Tempo, Loki,
-      Prometheus
+    <dd class="tags">
+      <span class="tag">OpenTelemetry</span><span class="tag"
+        >Distributed Tracing</span
+      ><span class="tag">Grafana</span><span class="tag">Jaeger/Tempo</span
+      ><span class="tag">Loki</span><span class="tag">Prometheus</span>
     </dd>
     <dt>Perbankan & Pembayaran</dt>
-    <dd>
-      BI-FAST Integration, Core Banking Integration (Mambu), Financial
-      Services, Banking Systems
+    <dd class="tags">
+      <span class="tag">BI-FAST Integration</span><span class="tag"
+        >Core Banking Integration (Mambu)</span
+      ><span class="tag">Financial Services</span><span class="tag"
+        >Banking Systems</span
+      >
     </dd>
     <dt>Infrastruktur</dt>
-    <dd>Docker, Git</dd>
+    <dd class="tags">
+      <span class="tag">Docker</span><span class="tag">Git</span>
+    </dd>
     <dt>Sedang didalami</dt>
-    <dd>
-      RAG (Retrieval-Augmented Generation) workflow design, prompt
-      engineering untuk otomasi development
+    <dd class="tags">
+      <span class="tag">RAG (Retrieval-Augmented Generation) workflow design</span
+      ><span class="tag">prompt engineering untuk otomasi development</span>
     </dd>
   </dl>
 
-  <h2>Pendidikan</h2>
+  <h2 class="section-title">Pendidikan</h2>
   <p><strong>Sarjana Komputer</strong> — Universitas BSI Bandung (Sep 2014 – Aug 2018)</p>
 
-  <h2>Di Luar Kerjaan</h2>
+  <h2 class="section-title">Di Luar Kerjaan</h2>
   <p>Game, badminton, musik.</p>
 </Layout>

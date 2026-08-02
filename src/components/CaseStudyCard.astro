@@ -9,23 +9,48 @@ interface Props {
   metricValue?: string;
   metricLabel?: string;
   size?: "featured" | "wide";
+  tags?: string[];
 }
 
-const { href, icon, title, summary, metricValue, metricLabel, size } =
-  Astro.props;
+const {
+  href,
+  icon,
+  title,
+  summary,
+  metricValue,
+  metricLabel,
+  size,
+  tags,
+} = Astro.props;
 const sizeClass = size ? `case-card--${size}` : "";
 ---
 
 <a class={`case-card reveal ${sizeClass}`} href={href}>
-  <span class="case-card-icon"><Icon name={icon} /></span>
-  {
-    metricValue && (
-      <div class="case-metric">
-        <span class="metric-value">{metricValue}</span>
-        <span class="metric-label">{metricLabel}</span>
-      </div>
-    )
-  }
-  <h3>{title}</h3>
-  <p>{summary}</p>
+  <div class="case-card-media">
+    <span class="case-card-icon"><Icon name={icon} /></span>
+    {
+      metricValue && (
+        <div class="case-metric">
+          <span class="metric-value">{metricValue}</span>
+          <span class="metric-label">{metricLabel}</span>
+        </div>
+      )
+    }
+  </div>
+  <div class="case-card-body">
+    <h3>{title}</h3>
+    <p>{summary}</p>
+    {
+      tags && tags.length > 0 && (
+        <div class="tags case-card-tags">
+          {tags.map((t) => (
+            <span class="tag">{t}</span>
+          ))}
+        </div>
+      )
+    }
+    <span class="case-card-arrow" aria-hidden="true">
+      <Icon name="arrow-right" />
+    </span>
+  </div>
 </a>

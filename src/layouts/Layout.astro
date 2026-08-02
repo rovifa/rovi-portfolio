@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Icon from "../components/Icon.astro";
 
 interface Props {
   title: string;
@@ -21,7 +22,7 @@ const {
     <meta name="description" content={description} />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧑‍💻</text></svg>" />
   </head>
-  <body>
+  <body id="top">
     <header class="site-header">
       <div class="container">
         <a class="brand" href="/">Rovi Fauzan Akbar</a>
@@ -38,8 +39,45 @@ const {
       </div>
     </main>
     <footer class="site-footer">
-      <div class="container">
-        © {new Date().getFullYear()} Rovi Fauzan Akbar. Dibangun dengan Astro.
+      <div class="container footer-inner">
+        <p class="footer-copy">
+          © {new Date().getFullYear()} Rovi Fauzan Akbar. Dibangun dengan Astro.
+        </p>
+        <div class="footer-links">
+          <a
+            class="icon-btn icon-btn-sm"
+            href="https://github.com/rovifa"
+            target="_blank"
+            rel="noopener"
+            aria-label="Kunjungi GitHub Rovi Fauzan Akbar"
+          >
+            <Icon name="github" />
+          </a>
+          <a
+            class="icon-btn icon-btn-sm"
+            href="https://www.linkedin.com/in/rovi-fauzan-akbar"
+            target="_blank"
+            rel="noopener"
+            aria-label="Kunjungi LinkedIn Rovi Fauzan Akbar"
+          >
+            <Icon name="linkedin" />
+          </a>
+          <a
+            class="icon-btn icon-btn-sm"
+            href="mailto:rovifauzan95@gmail.com"
+            aria-label="Kirim email ke Rovi Fauzan Akbar"
+          >
+            <Icon name="mail" />
+          </a>
+          <a class="btn btn-outline btn-sm" href="/cv.pdf" download>
+            <Icon name="download" />
+            Download CV
+          </a>
+          <a class="btn btn-outline btn-sm" href="#top">
+            <Icon name="arrow-up" />
+            Kembali ke atas
+          </a>
+        </div>
       </div>
     </footer>
 
@@ -69,11 +107,12 @@ const {
             document.execCommand("copy");
             document.body.removeChild(input);
           }
-          const original = btn.textContent;
-          btn.textContent = "✅";
+          const original = btn.innerHTML;
+          btn.innerHTML =
+            '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
           btn.classList.add("copied");
           setTimeout(() => {
-            btn.textContent = original;
+            btn.innerHTML = original;
             btn.classList.remove("copied");
           }, 1500);
         });
