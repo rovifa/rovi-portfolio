@@ -16,7 +16,9 @@ interface Props {
     | "download"
     | "copy"
     | "check"
-    | "clock";
+    | "clock"
+    | "menu"
+    | "x";
   class?: string;
 }
 
@@ -50,6 +52,8 @@ const paths: Record<Props["name"], string> = {
   check: '<path d="M20 6 9 17l-5-5"/>',
   clock:
     '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  menu: '<line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
 };
 ---
 

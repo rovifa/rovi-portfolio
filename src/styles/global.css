@@ -65,6 +65,7 @@ body {
 }
 
 .site-header .container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -94,6 +95,69 @@ body {
 
 .nav-links a:hover {
   color: var(--accent);
+}
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.nav-toggle .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-toggle .icon-x {
+  display: none;
+}
+
+.nav-toggle[aria-expanded="true"] .icon-menu {
+  display: none;
+}
+
+.nav-toggle[aria-expanded="true"] .icon-x {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    padding: 4px 24px 12px;
+  }
+
+  .nav-links.is-open {
+    display: flex;
+  }
+
+  .nav-links a {
+    padding: 12px 0;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links a:last-child {
+    border-bottom: none;
+  }
 }
 
 main {
@@ -845,6 +909,7 @@ code {
 }
 
 pre.mermaid {
+  position: relative;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -852,6 +917,33 @@ pre.mermaid {
   margin: 20px 0;
   overflow-x: auto;
   text-align: center;
+}
+
+/* Mermaid renders its SVG with width="100%" and no absolute intrinsic
+   size, so the browser has nothing to size it by except the container
+   — that's what shrinks diagram text to unreadable sizes on narrow
+   screens. The actual fix (explicit px width/height read from the
+   SVG's own viewBox) is applied via JS in Layout.astro once mermaid
+   finishes rendering; the pre's overflow-x:auto then handles the
+   resulting horizontal scroll. */
+
+pre.mermaid::after {
+  content: "";
+  position: absolute;
+  top: 20px;
+  right: 0;
+  bottom: 20px;
+  width: 32px;
+  background: linear-gradient(to right, transparent, var(--bg-elevated));
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+@media (max-width: 767px) {
+  pre.mermaid.can-scroll::after {
+    opacity: 1;
+  }
 }
 
 /* ---------- Footer ---------- */

@@ -26,7 +26,18 @@ const {
     <header class="site-header">
       <div class="container">
         <a class="brand" href="/">Rovi Fauzan Akbar</a>
-        <nav class="nav-links">
+        <button
+          type="button"
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-expanded="false"
+          aria-controls="nav-links"
+          aria-label="Buka menu navigasi"
+        >
+          <Icon name="menu" />
+          <Icon name="x" />
+        </button>
+        <nav class="nav-links" id="nav-links">
           <a href="/#pengalaman">Pengalaman</a>
           <a href="/#studi-kasus">Studi Kasus</a>
           <a href="mailto:rovifauzan95@gmail.com">Kontak</a>
@@ -116,6 +127,83 @@ const {
             btn.classList.remove("copied");
           }, 1500);
         });
+      });
+    </script>
+
+    <script>
+      const navToggle = document.getElementById("nav-toggle");
+      const navLinksEl = document.getElementById("nav-links");
+
+      if (navToggle && navLinksEl) {
+        const closeNav = () => {
+          navLinksEl.classList.remove("is-open");
+          navToggle.setAttribute("aria-expanded", "false");
+          navToggle.setAttribute("aria-label", "Buka menu navigasi");
+        };
+
+        navToggle.addEventListener("click", () => {
+          const isOpen = navLinksEl.classList.toggle("is-open");
+          navToggle.setAttribute("aria-expanded", String(isOpen));
+          navToggle.setAttribute(
+            "aria-label",
+            isOpen ? "Tutup menu navigasi" : "Buka menu navigasi"
+          );
+        });
+
+        navLinksEl.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", closeNav);
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!navLinksEl.classList.contains("is-open")) return;
+          const target = e.target;
+          if (navToggle.contains(target) || navLinksEl.contains(target)) return;
+          closeNav();
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeNav();
+        });
+      }
+    </script>
+
+    <script>
+      document.querySelectorAll("pre.mermaid").forEach((el) => {
+        const updateFade = () => {
+          const canScrollRight =
+            el.scrollWidth - el.clientWidth - el.scrollLeft > 4;
+          el.classList.toggle("can-scroll", canScrollRight);
+        };
+
+        // Mermaid renders its SVG with width="100%" and no absolute
+        // intrinsic size, so without this the browser falls back to a
+        // default ~300px box and the diagram (text included) keeps
+        // rescaling down as the viewport narrows. Pin the SVG to its own
+        // viewBox size instead, so it renders at natural/readable size
+        // and pre's overflow-x:auto handles the rest via horizontal
+        // scroll.
+        const fixSvgSize = () => {
+          const svg = el.querySelector("svg");
+          if (!svg || svg.dataset.sizeFixed) return;
+          const viewBox = svg.getAttribute("viewBox");
+          if (!viewBox) return;
+          const parts = viewBox.split(/\s+/).map(Number);
+          if (parts.length !== 4 || !(parts[2] > 0) || !(parts[3] > 0)) {
+            return;
+          }
+          svg.style.width = parts[2] + "px";
+          svg.style.height = parts[3] + "px";
+          svg.style.maxWidth = "none";
+          svg.dataset.sizeFixed = "true";
+          updateFade();
+        };
+
+        const observer = new MutationObserver(fixSvgSize);
+        observer.observe(el, { childList: true, subtree: true });
+        el.addEventListener("scroll", updateFade, { passive: true });
+        window.addEventListener("resize", updateFade);
+        fixSvgSize();
+        updateFade();
       });
     </script>
 
