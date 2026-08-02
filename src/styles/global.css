@@ -419,8 +419,8 @@ code {
 
 .reveal {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
 .reveal.is-visible {
@@ -457,12 +457,96 @@ code {
   font-size: 0.95rem;
 }
 
+/* Category color variants, currently unused (all case-study callouts are
+   standardized to the emerald accent) — kept in case a per-category color
+   system is wanted later. */
 .callout.yellow { border-left-color: var(--yellow); }
 .callout.green { border-left-color: var(--green); }
 .callout.purple { border-left-color: var(--purple); }
 .callout.orange { border-left-color: var(--orange); }
 .callout.blue { border-left-color: var(--callout-blue); }
 .callout.gray { border-left-color: var(--text-faint); }
+
+/* ---------- Case study header: icon-aligned h1 ---------- */
+
+.case-header h1 {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.case-icon {
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+/* ---------- Status badge (e.g. "Ongoing") ---------- */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(227, 179, 65, 0.12);
+  border: 1px solid rgba(227, 179, 65, 0.35);
+  color: var(--yellow);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-badge .icon {
+  width: 13px;
+  height: 13px;
+}
+
+/* ---------- Case study stat cards (Hasil/Dampak) ---------- */
+
+.stat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 16px 0 20px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 22px;
+  min-width: 150px;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -12px var(--accent-glow);
+}
+
+.stat-card-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-card-label {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+/* ---------- Placeholder note (sections pending content) ---------- */
+
+.placeholder-note {
+  color: var(--text-faint);
+  font-style: italic;
+  font-size: 0.88rem;
+}
 
 /* ---------- Pengalaman: timeline ---------- */
 

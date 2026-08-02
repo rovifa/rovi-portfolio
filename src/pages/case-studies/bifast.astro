@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import StatCard from "../../components/StatCard.astro";
 
 const diagramInquiry = `flowchart LR
     CH["Channel (SNAP / Mobile / Konvensional)"] --> APIM["APIM"]
@@ -71,11 +72,11 @@ const diagramWorker = `flowchart TD
 <Layout title="Revamp BI-FAST — Bank Ina Perdana | Rovi Fauzan Akbar">
   <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
 
-  <div class="case-header">
-    <h1>⚡ Revamp BI-FAST — Bank Ina Perdana</h1>
+  <div class="case-header reveal">
+    <h1><span class="case-icon" aria-hidden="true">⚡</span> Revamp BI-FAST — Bank Ina Perdana</h1>
   </div>
 
-  <div class="callout yellow">
+  <div class="callout reveal">
     <strong>Ringkasan:</strong> Melakukan revamp menyeluruh terhadap layanan BI-FAST
     secara mandiri — dari performa yang sering mengalami spike dan gangguan data,
     menjadi sistem yang menangani throughput di atas 100 TPS dengan latency dan
@@ -361,13 +362,13 @@ const diagramWorker = `flowchart TD
   </ul>
 
   <h2>Hasil</h2>
+  <div class="stat-grid reveal">
+    <StatCard value="100+" label="TPS pada hari sibuk" />
+    <StatCard value="~170rb" label="Transaksi/hari (rata-rata)" />
+  </div>
   <ul>
     <li>Latency turun drastis dari kondisi sebelumnya.</li>
     <li>Error rate turun signifikan.</li>
-    <li>
-      Throughput naik ke atas 100 TPS pada hari sibuk (di luar payroll,
-      volume harian BI-FAST rata-rata sekitar 170 ribu transaksi/hari).
-    </li>
   </ul>
 
   <h2>Yang Saya Pelajari</h2>

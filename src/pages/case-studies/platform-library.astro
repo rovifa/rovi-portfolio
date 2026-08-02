@@ -1,16 +1,17 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import StatCard from "../../components/StatCard.astro";
 ---
 
 <Layout title="bina-library & api-client-library | Rovi Fauzan Akbar">
   <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
 
-  <div class="case-header">
-    <h1>🧩 bina-library & api-client-library</h1>
+  <div class="case-header reveal">
+    <h1><span class="case-icon" aria-hidden="true">🧩</span> bina-library & api-client-library</h1>
     <p class="hero-tagline">Membangun Fondasi Platform Internal</p>
   </div>
 
-  <div class="callout gray">
+  <div class="callout reveal">
     <strong>Ringkasan:</strong> Membangun dua library internal — bina-library
     dan api-client-library — yang jadi fondasi standar untuk observability,
     audit trail, dan komunikasi antar-service. bina-library sudah diadopsi
@@ -73,6 +74,9 @@ import Layout from "../../layouts/Layout.astro";
   </p>
 
   <h2>Adopsi</h2>
+  <div class="stat-grid reveal">
+    <StatCard value="12+" label="Service produksi" />
+  </div>
   <p>Diverifikasi langsung dari dependency masing-masing service:</p>
   <table>
     <thead>

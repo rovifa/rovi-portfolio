@@ -1,0 +1,14 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<span class="status-badge">
+  <Icon name="clock" />
+  {label}
+</span>
