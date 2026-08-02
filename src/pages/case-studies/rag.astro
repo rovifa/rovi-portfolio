@@ -1,0 +1,154 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="RAG untuk Otomasi Development Workflow | Rovi Fauzan Akbar">
+  <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
+
+  <div class="case-header">
+    <h1>🧪 RAG untuk Otomasi Development Workflow</h1>
+    <p class="hero-tagline">Ongoing</p>
+  </div>
+
+  <div class="callout purple">
+    <strong>Ringkasan:</strong> Merancang framework dua tahap —
+    rag-initiate dan rag-execute — yang mengubah RAG dari sekadar "chatbot
+    tanya-jawab dokumen" jadi workflow development bergerbang: stakeholder
+    mengisi dan meng-approve dokumen requirement, baru AI diizinkan scan
+    repo, reuse function dari library internal, dan mengimplementasikan
+    fitur di branch terpisah. Masih tahap awal, belum sampai vector DB.
+  </div>
+
+  <h2>Motivasi</h2>
+  <p>
+    Tertarik dengan AI, khususnya bagaimana RAG bisa dipakai bukan cuma
+    untuk chatbot, tapi untuk mengotomasi proses development yang berulang.
+    Mulai dari yang paling simpel dulu untuk memahami mekanismenya secara
+    langsung, bukan cuma teori — dan ternyata bagian tersulitnya bukan
+    retrieval-nya, tapi memastikan AI bekerja dari dokumen yang benar-benar
+    lengkap dan disetujui semua pihak.
+  </p>
+
+  <h2>Arsitektur: Dua Prompt, Satu Siklus</h2>
+  <p>
+    <strong>rag-initiate (PROMPT 1)</strong> — dijalankan sekali di awal
+    tiap project/feature baru (atau ulang kalau BRD naik ke versi major
+    baru). Tugasnya cuma membangun kerangka, belum menyentuh kode sama
+    sekali:
+  </p>
+  <ul>
+    <li>
+      Membuat struktur Notion bernomor (01-Requirements sampai
+      10-Service-Versions) — prefix angka dipakai supaya lokasi dokumen
+      <strong>konsisten lintas project</strong> untuk AI, bukan untuk
+      kenyamanan baca manusia (makanya tiap feature juga punya halaman
+      index "mulai dari sini sesuai role kamu").
+    </li>
+    <li>
+      Membuat halaman panduan <strong>per role</strong> (PM/Product, Tech
+      Lead, Developer, QA Senior) yang self-contained — orang cukup baca
+      halaman role-nya sendiri, tidak perlu loncat ke halaman lain untuk
+      paham apa yang harus dikerjakan.
+    </li>
+    <li>
+      Membuat skeleton di Postgres (<code>projects</code>,
+      <code>features</code>, <code>documents</code>) — idempotent, dicek
+      dulu sebelum insert supaya rerun tidak menghasilkan duplikat.
+    </li>
+    <li>
+      Menetapkan <strong>Mandatory Checklist</strong>: BRD/URD, FSD, dan
+      Technical Spec (wajib berisi repo URL + repo terdampak, sequence
+      diagram, ERD, API contract) — masing-masing statusnya harus
+      <strong>Approved</strong> sebelum PROMPT 2 boleh jalan. Ini bukan
+      formalitas admin: tanpa sequence diagram AI menebak urutan call antar
+      service, tanpa ERD AI menebak schema, tanpa API contract AI menebak
+      request/response.
+    </li>
+  </ul>
+
+  <p>
+    <strong>rag-execute (PROMPT 2)</strong> — dijalankan developer setelah
+    semua dokumen mandatory Approved:
+  </p>
+  <ol>
+    <li>
+      <strong>Re-validasi checklist</strong> — query Postgres, kalau ada
+      dokumen mandatory yang belum Approved, stop total.
+    </li>
+    <li>
+      <strong>Auto-convert dokumen mentah</strong> — dokumen yang masih
+      berupa file Word/PDF dikonversi ke markdown otomatis (dengan catatan
+      ditinggalkan di halaman terkait supaya ownernya tidak kaget
+      tampilannya berubah).
+    </li>
+    <li>
+      <strong>Workspace & branch setup</strong> — cek IDE workspace
+      developer sudah berisi semua repo terdampak (plus
+      bina-library/api-client-library kalau relevan); nama branch mengikuti
+      nomor JIRA; branch selalu di-cut dari branch production
+      (<code>bina-prd</code>, fallback <code>main</code>) — tidak pernah
+      dari develop/staging.
+    </li>
+    <li>
+      <strong>Repo scanning incremental</strong> — membandingkan commit
+      terakhir yang di-scan vs HEAD tiap repo; kalau tidak ada perubahan,
+      skip (tidak scan ulang dari nol tiap kali dijalankan).
+    </li>
+    <li>
+      <strong>Library-First Check</strong> — sebelum menulis function baru,
+      AI wajib cari dulu di katalog <code>library_functions</code> (hasil
+      scan bina-library/api-client-library) apakah sudah ada yang bisa
+      dipakai ulang. Kalau belum ada dan sifatnya reusable, AI mengajukan MR
+      ke repo library (bukan commit langsung), dengan konfirmasi eksplisit
+      dari user dulu.
+    </li>
+    <li>
+      <strong>Implementasi & progress tracking</strong> — AI mengerjakan di
+      branch yang sudah dibuat, generate draft test scenario dari FSD, dan
+      update progress supaya developer & QA tinggal review — bukan
+      mengerjakan ulang dari nol.
+    </li>
+    <li>
+      <strong>Tutup eksekusi</strong> — versi di-bump (PATCH untuk eksekusi
+      rutin, major kalau siklus baru), dicatat di
+      <code>prompt_executions</code> sebagai audit trail.
+    </li>
+  </ol>
+
+  <h2>Guardrail</h2>
+  <p>
+    Tidak semua boleh berjalan otomatis: konfirmasi eksplisit wajib sebelum
+    push/MR ke repo library atau mengubah struktur database, tidak pernah
+    commit langsung ke branch production, dan tidak menulis credential/PII
+    asli ke Notion atau Postgres.
+  </p>
+
+  <h2>Batasan yang Ditemukan</h2>
+  <p>
+    Belum sampai ke implementasi vector database — retrieval saat ini masih
+    berbasis struktur Notion/Postgres yang rapi (folder bernomor, tabel
+    terstruktur), bukan semantic search. Skema <code>library_functions</code>
+    sengaja dibuat terstruktur (deskripsi, signature, contoh pakai, tags)
+    supaya nanti gampang dipindah ke pgvector tanpa nulis ulang dari nol —
+    jadi ini memang disiapkan sebagai langkah berikutnya, bukan diabaikan.
+  </p>
+  <p>
+    Kendala yang lebih besar justru bukan teknis: dokumentasi internal di
+    tempat kerja belum rapi. Sebagian feature hanya punya BRD tanpa FSD atau
+    technical spec, bahkan ada yang mulai langsung dari URD saja. Karena
+    Mandatory Checklist di rag-initiate memang didesain sebagai hard gate,
+    kasus-kasus ini otomatis tidak bisa lanjut ke rag-execute.
+  </p>
+
+  <h2>Yang Saya Pelajari</h2>
+  <p>
+    RAG hanya sekuat kualitas dan kelengkapan dokumen sumbernya — sebelum
+    bicara soal vector DB atau retrieval yang canggih, kualitas
+    data/dokumentasi jadi prasyarat yang jauh lebih menentukan. Merancang
+    gate approval per stakeholder, versioning yang mengikuti siklus BRD, dan
+    kebijakan reuse-before-reimplement ternyata sama pentingnya dengan
+    mekanisme retrieval itu sendiri — RAG yang baik bukan cuma soal "AI bisa
+    cari jawaban", tapi soal memastikan AI bekerja dari sumber yang benar
+    dan tidak mengulang kerja yang sudah ada.
+  </p>
+</Layout>

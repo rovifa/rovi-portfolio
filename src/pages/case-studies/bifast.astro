@@ -1,0 +1,388 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const diagramInquiry = `flowchart LR
+    CH["Channel (SNAP / Mobile / Konvensional)"] --> APIM["APIM"]
+    APIM --> EXP["EXP (sesuai channel)"]
+    EXP --> PROC["PROC BI-FAST Transaction"]
+    PROC -.-> LOG["Catat transaksi + channel asal"]
+    PROC --> BI["Jaringan BI-FAST"]`;
+
+const diagramCreditTransfer = `flowchart TD
+    APIM["APIM"] --> EXPS["EXP SNAP"]
+    APIM --> EXPM["EXP Mobile"]
+    APIM --> EXPK["EXP Konvensional"]
+
+    EXPS --> PROC1["PROC BI-FAST Transaction"]
+    EXPM --> PROC1
+    EXPK --> PROC1
+    PROC1 -.-> LOG1["Catat transaksi + channel asal"]
+
+    PROC1 --> SRC{"Channel & Sumber Dana?"}
+    SRC -->|"SNAP (selalu digital) / Mobile - Digital"| D1["Debit Core Banking (Digital)"]
+    SRC -->|"Mobile - Konvensional"| D2["Debit Sistem Konvensional"]
+    SRC -->|"Konvensional (passthru, debit sudah di sistem konvensional)"| PT["Passthru"]
+
+    D1 --> PROC2["PROC BI-FAST Transaction"]
+    D2 --> PROC2
+    PT --> PROC2
+    PROC2 --> CR["Credit ke Jaringan BI-FAST"]`;
+
+const diagramIncoming = `flowchart TD
+    BI["Jaringan BI-FAST"] --> APIM["APIM"]
+    APIM --> EXP["EXP BI Gateway"]
+    EXP --> PROC["PROC BI-FAST Transaction"]
+    PROC -.-> LOG["Catat transaksi + channel asal"]
+    PROC --> JENIS{"Inquiry atau Credit?"}
+    JENIS -->|"Inquiry"| CHK1{"Tipe Rekening?"}
+    CHK1 -->|"Digital"| RESP1["Response Info Rekening Digital"]
+    CHK1 -->|"Konvensional"| RESP2["Response Info Rekening Konvensional"]
+    JENIS -->|"Credit"| CHK2{"Tipe Rekening?"}
+    CHK2 -->|"Konvensional"| NOTIF["Notifikasi ke Sistem Konvensional"]
+    CHK2 -->|"Digital"| HOLD["Buat Transaksi Hold Deposit"]
+    HOLD -.->|"Dilepas saat settlement diterima"| SETTLENOTE["Lihat alur Settlement di bawah"]`;
+
+const diagramSettlement = `flowchart TD
+    BI["Jaringan BI-FAST (Notifikasi Settlement)"] --> APIM["APIM"]
+    APIM --> EXP["EXP BI Gateway"]
+    EXP --> PROC["PROC BI-FAST Transaction"]
+    PROC -.-> LOG["Catat transaksi + channel asal"]
+    PROC --> R{"Cek Redis"}
+    R -->|"Hit"| T
+    R -->|"Miss"| DB["Cek Database"] --> T
+    T{"Tipe Transaksi?"}
+    T -->|"Outgoing"| A{"Tipe Rekening?"}
+    T -->|"Incoming"| RL["Release Hold -> Credit ke Rekening Tujuan"]
+    A -->|"Digital"| DF["Debit Final Rekening Digital"]
+    A -->|"Konvensional"| NK["Notifikasi Settlement ke Sistem Konvensional"]`;
+
+const diagramWorker = `flowchart TD
+    PST["Setiap Posting Transaksi"] -.-> SR["Set ke Redis + Redis Sorted Set"]
+    SDONE["Settlement Selesai"] -.-> DR["Hapus Data Posting dari Redis"]
+
+    W["Worker Payment Status (berjalan berkala)"] --> L{"Lookup Redis Sorted Set"}
+    L -->|"Redis mati"| DBX["Lookup Database"]
+    L --> ST{"Status?"}
+    DBX --> ST
+    ST -->|"Pending"| Q["Query status ke BI-FAST"] --> U["Update status transaksi"]
+    ST -->|"Success / Failed"| RT["Kembalikan status dari DB (tanpa query ulang ke BI-FAST)"]`;
+---
+
+<Layout title="Revamp BI-FAST — Bank Ina Perdana | Rovi Fauzan Akbar">
+  <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
+
+  <div class="case-header">
+    <h1>⚡ Revamp BI-FAST — Bank Ina Perdana</h1>
+  </div>
+
+  <div class="callout yellow">
+    <strong>Ringkasan:</strong> Melakukan revamp menyeluruh terhadap layanan BI-FAST
+    secara mandiri — dari performa yang sering mengalami spike dan gangguan data,
+    menjadi sistem yang menangani throughput di atas 100 TPS dengan latency dan
+    error rate turun drastis.
+  </div>
+
+  <h2>Konteks</h2>
+  <p>
+    BI-FAST di Bank Ina menghadapi kendala berulang: performa lambat, data
+    tidak konsisten, dan sering spike saat traffic tinggi. Saya ditugaskan
+    menangani ini seorang diri, dari analisis akar masalah sampai
+    implementasi.
+  </p>
+
+  <h2>Peran Saya</h2>
+  <p>
+    Project ini berjalan di bawah arahan atasan, namun untuk pendekatan
+    teknis dan arsitekturnya diserahkan sepenuhnya ke saya — dari desain,
+    implementasi, sampai deployment, saya kerjakan sendiri sebagai
+    satu-satunya developer di project ini. PM dan QA punya tim dan peran
+    tersendiri di luar development.
+  </p>
+
+  <h2>Prinsip Desain</h2>
+  <p>
+    APIM dan EXP jadi pintu masuk yang disesuaikan per channel — SNAP
+    (partner), Mobile, Konvensional, dan BI Gateway (untuk trafik dari
+    jaringan BI-FAST) masing-masing punya EXP sendiri untuk menangani nuansa
+    tiap channel. Alurnya selalu top-down: tidak ada EXP yang boleh side-step
+    langsung ke layer berikutnya, dan tidak ada panggilan menyamping antar
+    EXP maupun antar PROC — setiap service berdiri independen satu sama
+    lain. Untuk transaksi BI-FAST, semua channel tetap wajib lewat
+    <strong>PROC BI-FAST Transaction</strong> sebagai satu-satunya sumber
+    business logic untuk domain ini — termasuk channel Konvensional yang
+    sifatnya passthru, tetap masuk lewat PROC, bukan bypass.
+  </p>
+  <p>
+    Prinsip independensi ini juga berlaku di lapisan data: hanya PROC yang
+    punya koneksi ke database — EXP tidak pernah connect langsung ke
+    database manapun. Tiap PROC juga punya database sendiri
+    (database-per-service); kalau ada PROC lain yang butuh data yang
+    dimiliki PROC ini, sinkronisasinya lewat Pub/Sub, bukan lewat query
+    langsung antar database atau panggilan sinkron antar PROC.
+  </p>
+  <p>
+    Setiap kali ada inquiry, posting (credit transfer), maupun settlement,
+    PROC mencatat transaksi tersebut beserta channel asalnya — jadi ada
+    audit trail terpusat di satu titik, terlepas dari EXP mana yang
+    meneruskannya. Middleware menjembatani protokol/format data ke core
+    banking, sistem konvensional, dan jaringan BI-FAST.
+  </p>
+  <p>
+    Alurnya terbagi jadi <strong>outgoing</strong> (nasabah Bank Ina mengirim
+    dana lewat BI-FAST), <strong>incoming</strong> (dana masuk dari bank
+    lain), dengan <strong>settlement</strong> sebagai titik temu keduanya, dan
+    <strong>worker payment-status</strong> sebagai safety net di belakang layar.
+  </p>
+
+  <h2>Fondasi Platform yang Mendukung Revamp Ini</h2>
+  <p>
+    Revamp BI-FAST ini dibangun di atas dua library internal yang saya buat
+    untuk menstandardisasi observability, audit trail, dan komunikasi
+    antar-service di seluruh Bank Ina (bukan cuma BI-FAST) —
+    <strong>bina-library</strong> (wrapper untuk server run, generic
+    controller, dan instrumentasi OTel, dipakai 12+ service) dan
+    <strong>api-client-library</strong> (client terpusat antar-service).
+    Detail lengkap arsitektur, adopsi, dan dampaknya ada di studi kasus
+    tersendiri: <a href="/case-studies/platform-library">bina-library & api-client-library — Membangun Fondasi Platform Internal</a>.
+  </p>
+
+  <h2>Response Mapping Terstandardisasi</h2>
+  <p>
+    PROC BI-FAST Transaction mengeluarkan response dalam format standar BI,
+    bukan memetakan response di masing-masing kode caller — response dari
+    core banking maupun sistem konvensional dikonversi ke format ini secara
+    terpusat. Arah pengembangan berikutnya: response PROC bisa menyesuaikan
+    format sesuai channel pemanggil, supaya EXP tidak perlu melakukan
+    konversi ulang dan lebih fleksibel untuk kebutuhan tampilan (misalnya
+    mobile). Channel yang belum terdaftar cukup ditambahkan lewat
+    konfigurasi database tanpa perlu perubahan kode, hanya redeploy — dan
+    konfigurasi ini di-cache ke Redis untuk mengurangi beban database.
+  </p>
+
+  <h2>Pilihan Protokol: REST untuk EXP, gRPC untuk PROC</h2>
+  <p>
+    EXP tetap menggunakan REST API — migrasi ke gRPC butuh R&D tersendiri
+    untuk menyambungkannya ke APIM, dan karena EXP bukan layer yang
+    menanggung beban berat, ini bukan prioritas mengingat banyak service
+    sudah berjalan stabil di REST. PROC menggunakan gRPC penuh untuk
+    performa yang lebih cepat di layer yang benar-benar menangani beban
+    transaksi.
+  </p>
+
+  <h2>Outgoing — Account Inquiry</h2>
+  <p>
+    Sama untuk semua channel (SNAP, Mobile, Konvensional), tetap lewat PROC
+    yang mencatat channel asal:
+  </p>
+  <pre class="mermaid">{diagramInquiry}</pre>
+
+  <h2>Outgoing — Credit Transfer</h2>
+  <p>
+    Semua EXP (SNAP, Mobile, Konvensional) masuk dulu ke PROC — termasuk
+    Konvensional yang passthru, tetap tercatat di PROC sebelum diteruskan
+    sebagai credit posting:
+  </p>
+  <pre class="mermaid">{diagramCreditTransfer}</pre>
+
+  <h2>Incoming — Inquiry & Credit</h2>
+  <p>
+    Semua trafik incoming datang dari satu arah: jaringan BI-FAST lewat EXP
+    BI Gateway, tetap lewat PROC yang mencatat transaksi masuk. Untuk
+    credit, dana ditahan (hold) dulu di rekening digital sampai settlement
+    resmi diterima; untuk rekening konvensional, cukup diteruskan sebagai
+    notifikasi karena konvensional punya mekanismenya sendiri:
+  </p>
+  <pre class="mermaid">{diagramIncoming}</pre>
+
+  <h2>Settlement — Titik Temu Incoming & Outgoing</h2>
+  <p>
+    Semua notifikasi settlement, baik untuk transaksi incoming maupun
+    outgoing, datang lewat jalur yang sama dari BI, tetap lewat PROC yang
+    mencatatnya:
+  </p>
+  <pre class="mermaid">{diagramSettlement}</pre>
+
+  <h2>Worker Payment Status — Safety Net Rekonsiliasi</h2>
+  <p>
+    Ini adalah penambahan yang saya buat setelah insiden nyata di
+    production, bukan bagian dari desain awal. Ada anomali di sistem BI
+    yang kadang menyebabkan notifikasi settlement tidak sampai ke kami —
+    sekitar 5% dari volume transaksi — sehingga perlu rekonsiliasi dari
+    sisi kami. Worker ini berjalan otomatis untuk mengecek status kalau
+    dalam 30 detik belum menerima notifikasi settlement, menangkap
+    transaksi yang "menggantung" tanpa notifikasi:
+  </p>
+  <pre class="mermaid">{diagramWorker}</pre>
+  <p>
+    Karena data posting dihapus dari Redis begitu settlement masuk, worker
+    ini tidak pernah memproses ulang transaksi yang sudah selesai — dan
+    begitu status di database sudah final (bukan pending), worker langsung
+    mengembalikan status itu tanpa membebani API BI-FAST dengan query yang
+    tidak perlu.
+  </p>
+
+  <h2>Anomali Produksi Lain: Response 5xx tapi Tetap Dapat Settlement</h2>
+  <p>
+    Anomali lain yang kami temui di production: pada beberapa transaksi
+    credit transfer, kami menerima response code 5xx dari BI (mengindikasikan
+    transaksi gagal), tapi settlement notification untuk transaksi tersebut
+    tetap datang belakangan. Berdasarkan informasi dari BI, semua transaksi
+    yang mendapat settlement dianggap sukses — padahal secara logika, kalau
+    credit gagal (5xx), seharusnya tidak ada settlement sama sekali.
+  </p>
+  <p>
+    Untuk menangani ini, status transaksi tidak ditentukan final semata-mata
+    dari response code awal. Begitu settlement notification datang untuk
+    transaksi yang sebelumnya sempat ditandai gagal karena 5xx, status
+    transaksi diperbarui jadi sukses — mengikuti panduan dari BI bahwa
+    settlement adalah source of truth final, bukan response code awal.
+  </p>
+
+  <h2>Observability: OpenTelemetry & Grafana di proc-bifast-transaction</h2>
+  <p>
+    Saya yang mengimplementasikan OTel dan setup dashboard Grafana untuk
+    service ini dari awal, termasuk menyelesaikan masalah nyata yang muncul
+    begitu service di-scale ke lebih dari satu pod.
+  </p>
+  <p>
+    <strong>Masalah:</strong> Metric yang sifatnya cumulative (counter) jadi
+    kacau begitu pod lebih dari satu — tanpa dimensi yang membedakan tiap
+    pod, nilai dari beberapa instance pod bercampur dan hasil agregasinya
+    tidak akurat.
+  </p>
+  <p>
+    <strong>Solusi:</strong> Meminta tim DevOps mengekspos nama pod dan
+    namespace lewat Kubernetes downward API di manifest (<code>POD_NAME</code>
+    dan <code>POD_NAMESPACE</code> sebagai environment variable, diisi dari
+    <code>metadata.name</code> dan <code>metadata.namespace</code>), lalu
+    menambahkannya sebagai attribute standar (<code>k8s.pod.name</code>,
+    <code>k8s.namespace.name</code>) di setiap metric dan trace. Dengan
+    begitu, Prometheus/Grafana bisa membedakan dan menjumlahkan metric dari
+    tiap pod dengan benar, bukan tercampur jadi satu angka yang salah.
+  </p>
+  <p><strong>Desain metric — dua tingkat:</strong></p>
+  <ul>
+    <li>
+      <strong>General service</strong> (dipakai semua service, bukan cuma
+      BI-FAST) — tiga metric inti: <code>http_request_latency</code>
+      (histogram, untuk P50/P95/P99), <code>http_requests_in_flight</code>
+      (up-down counter, untuk concurrency), dan <code>http_request_total</code>
+      (counter, untuk perhitungan RPS dan breakdown per status code).
+    </li>
+    <li>
+      <strong>Khusus BI-FAST</strong> — metric serupa
+      (<code>bifast_request_latency</code>, <code>bifast_requests_in_flight</code>)
+      ditambah satu metric khusus, <code>bifast_reason_code_counter</code>,
+      dengan attribute yang mengikuti kebutuhan analitik per partner:
+      <code>reason_code</code>, <code>channel_id</code>, <code>partner_id</code>,
+      <code>swift_code</code> — supaya tim bisa menganalisis pola
+      kegagalan/reason code per partner BI-FAST secara spesifik.
+    </li>
+  </ul>
+  <p>
+    Saya juga membangun dashboard Grafana untuk memvisualisasikan
+    metric-metric ini. Cardinality-nya juga ditelusuri secara sadar —
+    setiap attribute tambahan melipatgandakan jumlah time series, jadi
+    attribute-attribute ini dibuat configurable (bisa dimatikan lewat
+    konfigurasi) supaya penggunaan memory tetap terkendali di production.
+  </p>
+
+  <h2>Keputusan Teknis Utama</h2>
+  <ul>
+    <li>
+      <strong>Alur top-down, wajib lewat PROC</strong> — setiap EXP (SNAP,
+      Mobile, Konvensional, BI Gateway) tidak boleh side-step ke layer
+      berikutnya; semua transaksi, termasuk yang sifatnya passthru, tetap
+      masuk lewat PROC BI-FAST Transaction.
+    </li>
+    <li>
+      <strong>Service independen, database hanya di PROC</strong> — tidak
+      ada panggilan menyamping antar EXP atau antar PROC. Hanya PROC yang
+      connect ke database, dan tiap PROC punya database sendiri
+      (database-per-service). Sinkronisasi data antar PROC, kalau
+      diperlukan, lewat Pub/Sub — bukan query langsung ke database PROC
+      lain.
+    </li>
+    <li>
+      <strong>Audit trail terpusat di PROC</strong> — setiap inquiry,
+      posting, dan settlement dicatat lengkap dengan channel asalnya di
+      satu titik, sehingga penelusuran masalah tidak perlu menyisir log di
+      banyak EXP berbeda.
+    </li>
+    <li>
+      <strong>Audit payload dipisah ke Firebase</strong> — payload lengkap
+      tiap transaksi disimpan di Firebase, bukan di database utama, supaya
+      database hanya menyimpan record interaksi antar service yang ringan
+      dan cepat di-query. Audit trail tetap lengkap tanpa membebani
+      database transaksional.
+    </li>
+    <li>
+      <strong>Observability end-to-end dengan OpenTelemetry + Grafana</strong>
+      — tracing (Tempo), metric (Prometheus), dan log terpusat (Loki)
+      dipasang di seluruh alur BI-FAST, termasuk penanganan khusus untuk
+      metric multi-pod.
+    </li>
+    <li>
+      <strong>Shared PROC layer lintas channel</strong> — satu PROC yang
+      sama jadi single source business logic, menghindari
+      duplikasi/divergensi rule antar channel.
+    </li>
+    <li>
+      <strong>Single handshake via Dependency Injection</strong> —
+      memastikan koneksi/handshake ke layanan eksternal hanya terjadi satu
+      kali per siklus, bukan berulang tiap request.
+    </li>
+    <li>
+      <strong>Database connection pooling</strong> — mengurangi overhead
+      pembuatan koneksi baru di setiap transaksi.
+    </li>
+    <li>
+      <strong>Konkurensi untuk data non-kritis, sekuensial untuk transaksi
+      inti</strong> — logging dan data opsional (nama bank tujuan, NIK)
+      diproses konkuren, tapi alur transaksi utama tetap sekuensial karena
+      tidak boleh ada race condition di sana.
+    </li>
+    <li>
+      <strong>Redis + Redis Sorted Set sebagai lapisan reconciliation</strong>
+      — setiap posting transaksi disimpan di Redis biasa (lookup cepat saat
+      settlement masuk) dan Redis sorted set (dipakai worker untuk
+      reconciliation). Begitu settlement masuk, data posting di Redis
+      dihapus.
+    </li>
+    <li>
+      <strong>Worker payment-status sebagai safety net</strong> — fallback
+      ke database kalau Redis down, dan hanya query ulang ke BI-FAST kalau
+      status masih pending — bukan untuk setiap transaksi.
+    </li>
+    <li>
+      <strong>Horizontal autoscaling di GCP</strong> — membantu sistem
+      menyerap lonjakan traffic tanpa penurunan performa.
+    </li>
+  </ul>
+
+  <h2>Hasil</h2>
+  <ul>
+    <li>Latency turun drastis dari kondisi sebelumnya.</li>
+    <li>Error rate turun signifikan.</li>
+    <li>
+      Throughput naik ke atas 100 TPS pada hari sibuk (di luar payroll,
+      volume harian BI-FAST rata-rata sekitar 170 ribu transaksi/hari).
+    </li>
+  </ul>
+
+  <h2>Yang Saya Pelajari</h2>
+  <p>
+    Memisahkan orkestrasi per-channel (EXP) dari business logic yang shared
+    (PROC) membuat sistem jauh lebih mudah dirawat ketika channel baru
+    ditambahkan — dengan syarat disiplin menjaga alur tetap top-down lewat
+    PROC, tanpa shortcut, supaya audit trail dan business rule tetap
+    konsisten di satu tempat. Reconciliation safety net dan penanganan
+    anomali 5xx-tapi-settlement ini sendiri lahir dari insiden nyata di
+    production, bukan dirancang dari awal di atas kertas. Itu mengajarkan
+    saya bahwa untuk sistem yang bergantung pada notifikasi dari pihak
+    eksternal yang perilakunya tidak selalu konsisten, desain sistem
+    pembayaran harus terus berevolusi mengikuti kejadian nyata di lapangan
+    — dan kesiapan untuk menambahkan safety net setelah insiden, bukan
+    cuma di awal, sama pentingnya dengan desain awal itu sendiri.
+  </p>
+</Layout>

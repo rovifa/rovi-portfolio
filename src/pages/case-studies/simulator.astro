@@ -1,0 +1,93 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const diagramModeSwitching = `flowchart TD
+    SVC["Service (EXP / PROC)"] --> ACL["api-client-library"]
+    ACL --> MODE{"Cek Mode di Redis (per service / per partner)"}
+    MODE -->|"Real"| EXT["Service Eksternal Asli (BI-FAST / Partner / Core Banking)"]
+    MODE -->|"Dummy"| FIX["Fixture JSON Statis (untuk performance test)"]
+    MODE -->|"Simulator"| SIM["simulator-server"]
+    SIM --> RULE{"Rule Engine (kondisi nested / array)"}
+    RULE --> DELAY["Simulasi Delay"]
+    RULE --> RTO["Simulasi RTO / Timeout"]
+    RULE --> CUSTOM["Response Custom per Kondisi (generate dinamis)"]`;
+---
+
+<Layout title="Simulator Server & Mode Switching | Rovi Fauzan Akbar">
+  <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
+
+  <div class="case-header">
+    <h1>🎭 Simulator Server & Mode Switching</h1>
+    <p class="hero-tagline">Infrastruktur Testing Self-Service</p>
+  </div>
+
+  <div class="callout orange">
+    <strong>Ringkasan:</strong> Membangun simulator-server dan mekanisme
+    mode switching di api-client-library sehingga QA dan PM bisa
+    mensimulasikan kegagalan partner/server eksternal (delay, timeout,
+    response custom) secara self-service lewat Redis, tanpa bergantung pada
+    developer atau environment eksternal yang tidak stabil.
+  </div>
+
+  <h2>Masalah</h2>
+  <p>
+    Testing sering terhambat karena dependency ke server eksternal yang
+    tidak selalu stabil — BI-FAST dev server atau partner service kadang
+    mati atau lambat merespons di luar kendali kita. QA butuh cara untuk
+    menguji skenario kegagalan (delay, RTO/timeout, error spesifik) secara
+    konsisten dan berulang, sementara tim performance testing butuh cara
+    untuk membebani sistem tanpa ikut membebani service eksternal asli.
+  </p>
+
+  <h2>Solusi</h2>
+  <p>Dua komponen yang saling melengkapi:</p>
+  <p>
+    <strong>simulator-server</strong> — service khusus untuk mensimulasikan
+    behavior BI-FAST dev server maupun partner service. Bisa mengatur delay,
+    RTO (request time out), dan response spesifik per kondisi. Rule
+    kondisinya fleksibel — bisa berupa nested object atau array — dan bisa
+    generate response secara dinamis, bukan sekadar static mock.
+  </p>
+  <p>
+    <strong>Mode switching di api-client-library</strong> — setiap
+    pemanggilan ke service eksternal lewat api-client-library bisa
+    diarahkan ke tiga mode: <strong>real</strong> (service sungguhan),
+    <strong>dummy</strong> (fixture JSON statis, dipakai untuk performance
+    test supaya tidak membebani service eksternal asli), atau
+    <strong>simulator</strong> (diarahkan ke simulator-server untuk skenario
+    kegagalan). Switch ini bisa diatur spesifik per partner atau per
+    service, dan dikendalikan lewat Redis saja — jadi PM atau QA bisa
+    mengatur sendiri tanpa perlu developer deploy ulang.
+  </p>
+
+  <h2>Alur Mode Switching</h2>
+  <pre class="mermaid">{diagramModeSwitching}</pre>
+
+  <h2>Dampak</h2>
+  <ul>
+    <li>
+      QA bisa menguji skenario kegagalan partner (server mati, delay,
+      timeout) secara konsisten dan berulang, tanpa harus menunggu kondisi
+      itu benar-benar terjadi di environment eksternal.
+    </li>
+    <li>
+      Tim performance test bisa membebani sistem lewat mode dummy tanpa
+      ikut membebani service eksternal asli.
+    </li>
+    <li>
+      PM/QA bisa switch mode sendiri lewat Redis, per partner atau per
+      service — tidak perlu minta bantuan developer atau deploy ulang
+      setiap kali ganti skenario test.
+    </li>
+    <li>
+      Satu library (api-client-library) jadi titik kontrol tunggal untuk
+      ketiga mode ini di seluruh service, konsisten dengan prinsip
+      standardisasi yang sama seperti di revamp BI-FAST.
+    </li>
+  </ul>
+  <p>
+    Detail lengkap arsitektur bina-library dan api-client-library (termasuk
+    daftar service yang sudah mengadopsi) ada di studi kasus
+    <a href="/case-studies/platform-library">bina-library & api-client-library — Membangun Fondasi Platform Internal</a>.
+  </p>
+</Layout>

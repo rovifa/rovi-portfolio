@@ -1,0 +1,77 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Sinkronisasi Data Mambu & eStatement | Rovi Fauzan Akbar">
+  <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
+
+  <div class="case-header">
+    <h1>🔗 Sinkronisasi Data Mambu & eStatement</h1>
+  </div>
+
+  <div class="callout blue">
+    <strong>Ringkasan:</strong> Menemukan dan menutup celah antara database
+    transaksi internal dan core banking Mambu, lalu dipercaya membangun
+    fitur pelaporan eStatement dan SPT secara mandiri.
+  </div>
+
+  <h2>Masalah</h2>
+  <p>
+    Data di database transaksi internal tidak sinkron dengan core banking
+    Mambu, dan data warehouse (DWH) pun tidak lengkap — sekitar 5–10% data
+    di core banking hilang atau tidak tercermin di sisi internal. Akibatnya,
+    setiap aplikasi internal yang butuh data harus menarik ulang ke core
+    banking, alih-alih memakai data yang sudah dimiliki sendiri.
+  </p>
+
+  <h2>Solusi</h2>
+  <p>
+    Melakukan R&D terhadap fitur-fitur Mambu dan menemukan bahwa webhook
+    Mambu bisa dijadikan source data real-time. Setiap transaksi yang
+    terjadi di core banking langsung disinkronkan lewat webhook, sehingga
+    data internal selalu up to date tanpa perlu request ulang ke core
+    banking setiap kali dibutuhkan.
+  </p>
+  <p>
+    Tapi webhook cuma mencatat data ke depan (real-time sejak diaktifkan),
+    tidak menjangkau data lama. Untuk mengisi celah data historis, saya
+    membuat <strong>sync mutation</strong> — proses tersendiri untuk backfill
+    transaksi-transaksi sebelumnya supaya data internal lengkap dari titik
+    awal, bukan cuma sejak webhook aktif.
+  </p>
+  <p>
+    Selain data mutasi transaksi, saya juga menarik
+    <strong>riwayat perubahan status rekening</strong> (APPROVE, CLOSE, dan
+    status lain) dari Mambu, bukan cuma status terbaru. Ini penting untuk
+    kebutuhan eStatement dan SPT periode lampau: status rekening yang
+    ditampilkan di laporan harus konsisten dengan kondisi rekening
+    <strong>pada saat periode laporan itu</strong>, bukan status rekening
+    saat laporan digenerate. Misalnya, kalau laporan untuk bulan Maret
+    dibuat sekarang dan rekeningnya aktif di bulan Maret, rekening itu harus
+    tetap muncul di laporan — meskipun sekarang statusnya sudah closed.
+    Kalau hanya mengandalkan status terbaru, laporan periode lampau bisa
+    kehilangan informasi yang seharusnya ada.
+  </p>
+
+  <h2>Dampak</h2>
+  <ul>
+    <li>
+      Data internal jadi lebih lengkap dan konsisten dengan core banking,
+      termasuk data historis yang tadinya tidak terjangkau webhook.
+    </li>
+    <li>
+      Mengurangi ketergantungan pada round-trip request ke core banking
+      untuk kebutuhan data rutin.
+    </li>
+    <li>
+      Laporan eStatement dan SPT periode lampau jadi akurat secara
+      point-in-time, bukan cuma mencerminkan status rekening terkini.
+    </li>
+    <li>
+      Karena kualitas data yang sudah rapi, saya dipercaya membangun fitur
+      <strong>eStatement</strong> dan pelaporan <strong>SPT bulanan</strong>
+      sendirian sebagai satu-satunya developer — fitur pelaporan yang
+      digenerate rutin tiap bulan.
+    </li>
+  </ul>
+</Layout>

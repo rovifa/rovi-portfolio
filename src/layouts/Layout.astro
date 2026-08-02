@@ -1,0 +1,55 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Portofolio Rovi Fauzan Akbar — Backend Engineer",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧑‍💻</text></svg>" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="/">Rovi Fauzan Akbar</a>
+        <nav class="nav-links">
+          <a href="/#pengalaman">Pengalaman</a>
+          <a href="/#studi-kasus">Studi Kasus</a>
+          <a href="mailto:rovifauzan95@gmail.com">Kontak</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        © {new Date().getFullYear()} Rovi Fauzan Akbar. Dibangun dengan Astro.
+      </div>
+    </footer>
+
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "dark",
+        securityLevel: "loose",
+      });
+    </script>
+  </body>
+</html>

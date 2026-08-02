@@ -1,0 +1,270 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CaseStudyCard from "../components/CaseStudyCard.astro";
+
+const caseStudies = [
+  {
+    href: "/case-studies/bifast",
+    icon: "⚡",
+    title: "Revamp BI-FAST — Bank Ina Perdana",
+    summary:
+      "Revamp menyeluruh layanan BI-FAST secara mandiri — throughput naik di atas 100 TPS, latency & error rate turun drastis.",
+  },
+  {
+    href: "/case-studies/platform-library",
+    icon: "🧩",
+    title: "bina-library & api-client-library",
+    summary:
+      "Membangun fondasi platform internal yang diadopsi 12+ service produksi di Bank Ina.",
+  },
+  {
+    href: "/case-studies/mambu-estatement",
+    icon: "🔗",
+    title: "Sinkronisasi Data Mambu & eStatement",
+    summary:
+      "Menutup celah data antara sistem internal dan core banking Mambu, lalu membangun fitur eStatement & SPT.",
+  },
+  {
+    href: "/case-studies/ottodigital",
+    icon: "🚀",
+    title: "Dari Nol ke Go, lalu Memimpin Sistem Pembayaran",
+    summary:
+      "Belajar Go dari nol di OttoDigital, dipercaya pegang VA Gateway, lalu memimpin tim kecil.",
+  },
+  {
+    href: "/case-studies/simulator",
+    icon: "🎭",
+    title: "Simulator Server & Mode Switching",
+    summary:
+      "Infrastruktur testing self-service supaya QA/PM bisa simulasikan kegagalan partner tanpa bergantung developer.",
+  },
+  {
+    href: "/case-studies/rag",
+    icon: "🧪",
+    title: "RAG untuk Otomasi Development Workflow",
+    summary:
+      "Framework dua tahap (rag-initiate & rag-execute) yang menggerbang AI code generation di balik approval stakeholder.",
+  },
+];
+---
+
+<Layout title="Rovi Fauzan Akbar — Backend Engineer Portfolio">
+  <section>
+    <h1>Rovi Fauzan Akbar</h1>
+    <p class="hero-tagline">
+      Saya membangun sistem backend yang menjaga uang tetap bergerak dengan
+      aman dan tepat waktu. Selama hampir 8 tahun saya banyak bekerja di
+      ranah perbankan dan fintech — sistem pembayaran, integrasi core
+      banking, dan observability untuk transaksi berskala tinggi.
+    </p>
+    <div class="contact-row">
+      <a href="mailto:rovifauzan95@gmail.com">rovifauzan95@gmail.com</a>
+      <a
+        href="https://www.linkedin.com/in/rovi-fauzan-akbar"
+        target="_blank"
+        rel="noopener">LinkedIn</a
+      >
+      <span>Bandung, Indonesia</span>
+    </div>
+  </section>
+
+  <h2>Ringkasan</h2>
+  <p>
+    Backend engineer dengan fokus pada Go, gRPC, Kafka, dan observability
+    (OpenTelemetry, Grafana, Loki, Tempo, Prometheus). Delapan tahun terakhir
+    saya menghabiskan waktu di industri perbankan dan fintech — mulai dari
+    integrasi enterprise banking di CIMB Niaga, memimpin arsitektur backend
+    pembayaran di Ottodigital, hingga saat ini menangani payment & transaction
+    services (termasuk BI-FAST) di Bank Ina Perdana. Saat ini saya juga sedang
+    eksplorasi bagaimana RAG bisa mengotomasi sebagian siklus development.
+  </p>
+
+  <h2 id="pengalaman">Pengalaman Kerja</h2>
+
+  <div class="job">
+    <div class="job-title">Back End Developer — PT Bank Ina Perdana</div>
+    <div class="job-meta">Agustus 2024 – sekarang · Jakarta Selatan</div>
+    <div class="tags">
+      <span class="tag">Go</span><span class="tag">gRPC</span><span
+        class="tag">PostgreSQL</span
+      ><span class="tag">Kafka</span><span class="tag">Redis</span><span
+        class="tag">OpenTelemetry</span
+      ><span class="tag">Grafana</span><span class="tag">Loki</span><span
+        class="tag">Tempo</span
+      ><span class="tag">Prometheus</span>
+    </div>
+    <ul>
+      <li>Memegang penuh revamp BI-FAST — lihat studi kasus di bawah.</li>
+      <li>
+        RnD integrasi webhook Mambu untuk menyelesaikan masalah data yang
+        tidak sinkron antara database transaksi internal dan core banking.
+      </li>
+      <li>Membangun fitur eStatement dan pelaporan SPT bulanan secara mandiri.</li>
+      <li>
+        Membangun observability stack (tracing, metric, logging terpusat)
+        sebagai standar tim.
+      </li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-title">Back End Developer — CIMB Niaga</div>
+    <div class="job-meta">Mei 2023 – Agustus 2024 · Tangerang Selatan</div>
+    <div class="tags">
+      <span class="tag">IBM Integration Bus</span><span class="tag"
+        >IBM DataPower</span
+      ><span class="tag">IBM BAW</span><span class="tag">IBM API Connect</span
+      ><span class="tag">SQL</span>
+    </div>
+    <ul>
+      <li>
+        Mendukung integrasi enterprise banking dan API Connect (APIM) untuk
+        mengekspos layanan internal ke partner eksternal.
+      </li>
+      <li>
+        Menelusuri dan menyelesaikan kegagalan integrasi di layer middleware
+        untuk mencegah transaksi tertunda atau hilang.
+      </li>
+      <li>
+        Terlibat langsung dengan tim partner eksternal saat integration
+        rollout dan onboarding.
+      </li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-title">Information Technology Developer — OttoDigital</div>
+    <div class="job-meta">Juni 2021 – Mei 2023 · Jakarta</div>
+    <div class="tags">
+      <span class="tag">Go</span><span class="tag">gRPC</span><span
+        class="tag">Kafka</span
+      ><span class="tag">PostgreSQL</span><span class="tag">Redis</span><span
+        class="tag">OpenTelemetry</span
+      ><span class="tag">Grafana</span>
+    </div>
+    <ul>
+      <li>
+        Belajar Go dari nol — dasar dalam 1 minggu, cukup dalam untuk
+        produksi dalam 2–3 minggu.
+      </li>
+      <li>
+        Memegang transaksi VA Gateway, lalu dipercaya membantu membangun
+        aplikasi Bank Ina karena performa yang konsisten.
+      </li>
+      <li>
+        Memimpin tim kecil (1–5 engineer junior): code review dan keputusan
+        desain backend.
+      </li>
+      <li>Detail lengkap di studi kasus di bawah.</li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-title">
+      Full Stack & iOS Developer — PT Autentikasi Garda Indonesia
+    </div>
+    <div class="job-meta">April 2020 – Juni 2021 · Bandung</div>
+    <div class="tags">
+      <span class="tag">SwiftUI</span><span class="tag">Swift</span><span
+        class="tag">Laravel</span
+      ><span class="tag">PHP</span><span class="tag">MySQL</span>
+    </div>
+    <ul>
+      <li>
+        Dipercaya belajar iOS dari nol (tim iOS saat itu sangat kecil) dan
+        membangun aplikasi native dengan SwiftUI — otodidak, sebelum era AI
+        assistant seperti sekarang.
+      </li>
+      <li>
+        Aplikasi ini sudah tidak aktif setelah perusahaan terdampak
+        COVID-19.
+      </li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-title">Full Stack Developer — PT Mitra Sinerji Teknoindo</div>
+    <div class="job-meta">Mei 2019 – April 2020 · Bandung</div>
+    <div class="tags">
+      <span class="tag">PHP</span><span class="tag">CodeIgniter</span><span
+        class="tag">JavaScript</span
+      ><span class="tag">MySQL</span>
+    </div>
+    <ul>
+      <li>
+        Memegang 10 project dalam satu tahun, seluruhnya selesai dan diterima
+        klien — berkontribusi pada kenaikan revenue perusahaan yang
+        diperkirakan lebih dari 50% dibanding sebelum bergabung, yang
+        diapresiasi lewat trip perusahaan ke Thailand.
+      </li>
+    </ul>
+  </div>
+
+  <div class="job">
+    <div class="job-title">
+      Full Stack Developer — PT Autentikasi Garda Indonesia (stint pertama)
+    </div>
+    <div class="job-meta">Mei 2018 – Mei 2019 · Bandung</div>
+    <div class="tags">
+      <span class="tag">PHP</span><span class="tag">Laravel</span><span
+        class="tag">JavaScript</span
+      ><span class="tag">MySQL</span>
+    </div>
+    <ul>
+      <li>
+        Titik awal karier: dasar-dasar production support, perbaikan bug, dan
+        bekerja langsung dengan pelapor masalah.
+      </li>
+    </ul>
+  </div>
+
+  <h2 id="studi-kasus">Studi Kasus</h2>
+  <div class="case-grid">
+    {
+      caseStudies.map((cs) => (
+        <CaseStudyCard
+          href={cs.href}
+          icon={cs.icon}
+          title={cs.title}
+          summary={cs.summary}
+        />
+      ))
+    }
+  </div>
+
+  <h2>Skills</h2>
+  <dl class="skills-list">
+    <dt>Bahasa & Framework</dt>
+    <dd>Go (Golang), PHP (Laravel, CodeIgniter), Swift/SwiftUI</dd>
+    <dt>Sistem & Arsitektur</dt>
+    <dd>
+      Microservices, Clean Architecture, RESTful API, gRPC, System Design,
+      API Integration
+    </dd>
+    <dt>Data & Messaging</dt>
+    <dd>PostgreSQL, MySQL, Redis, Apache Kafka, Google Cloud Pub/Sub</dd>
+    <dt>Observability</dt>
+    <dd>
+      OpenTelemetry, Distributed Tracing, Grafana, Jaeger/Tempo, Loki,
+      Prometheus
+    </dd>
+    <dt>Perbankan & Pembayaran</dt>
+    <dd>
+      BI-FAST Integration, Core Banking Integration (Mambu), Financial
+      Services, Banking Systems
+    </dd>
+    <dt>Infrastruktur</dt>
+    <dd>Docker, Git</dd>
+    <dt>Sedang didalami</dt>
+    <dd>
+      RAG (Retrieval-Augmented Generation) workflow design, prompt
+      engineering untuk otomasi development
+    </dd>
+  </dl>
+
+  <h2>Pendidikan</h2>
+  <p><strong>Sarjana Komputer</strong> — Universitas BSI Bandung (Sep 2014 – Aug 2018)</p>
+
+  <h2>Di Luar Kerjaan</h2>
+  <p>Game, badminton, musik.</p>
+</Layout>

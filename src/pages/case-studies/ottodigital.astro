@@ -1,0 +1,76 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Dari Nol ke Go, lalu Memimpin Sistem Pembayaran | Rovi Fauzan Akbar">
+  <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
+
+  <div class="case-header">
+    <h1>🚀 Dari Nol ke Go, lalu Memimpin Sistem Pembayaran</h1>
+    <p class="hero-tagline">OttoDigital</p>
+  </div>
+
+  <div class="callout green">
+    <strong>Ringkasan:</strong> Belajar Go dari nol dalam hitungan minggu,
+    dipercaya memegang transaksi VA Gateway, ikut membangun aplikasi Bank
+    Ina, lalu memimpin tim kecil untuk arsitektur backend pembayaran.
+  </div>
+
+  <h2>Konteks</h2>
+  <p>
+    Pindah ke Ottodigital Group setelah perusahaan sebelumnya (Autentikasi
+    Garda Indonesia) terdampak COVID-19. Go adalah bahasa yang sama sekali
+    baru buat saya saat itu.
+  </p>
+
+  <h2>Kurva Belajar</h2>
+  <ul>
+    <li>~1 minggu untuk memahami dasar Go dan bisa mulai produktif.</li>
+    <li>
+      ~2–3 minggu untuk paham lebih dalam — error handling idiomatis dan
+      struktur project yang lazim dipakai di Go. Belum masuk ke concurrency
+      di fase ini, karena saat itu semua transaksi masih ditangani
+      sequential.
+    </li>
+    <li>
+      Baru di tahun kedua mulai memakai concurrency, itupun terbatas —
+      sebagian besar waktu saya habiskan di alur transaksi yang memang
+      harus tetap sequential untuk menjaga konsistensi data.
+    </li>
+  </ul>
+
+  <h2>Tanggung Jawab yang Berkembang</h2>
+  <ol>
+    <li>
+      <strong>VA Gateway</strong> — dipercaya memegang transaksi Virtual
+      Account karena performa yang konsisten.
+    </li>
+    <li>
+      <strong>Aplikasi Bank Ina</strong> — karena track record di VA
+      Gateway, dipercaya membantu membangun aplikasi untuk Bank Ina (yang
+      belakangan menjadi tempat saya bekerja penuh waktu).
+    </li>
+    <li>
+      <strong>Leadership</strong> — menjadi lead untuk tim kecil (1–5
+      engineer junior), termasuk code review dan keputusan desain backend.
+    </li>
+  </ol>
+
+  <h2>Kontribusi Teknis</h2>
+  <ul>
+    <li>
+      Merancang arsitektur backend dan alur integrasi service-to-service
+      yang scalable.
+    </li>
+    <li>
+      Menetapkan observability (OpenTelemetry + Grafana) sebagai standar
+      tim untuk diagnosa masalah — sebelumnya belum ada standar semacam
+      ini.
+    </li>
+    <li>
+      Menangani retry, idempotency, dan failure recovery di pemrosesan
+      transaksi untuk mencegah duplikasi atau transaksi hilang — krusial di
+      sistem pembayaran.
+    </li>
+  </ul>
+</Layout>

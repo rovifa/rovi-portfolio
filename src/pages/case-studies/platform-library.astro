@@ -1,0 +1,153 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="bina-library & api-client-library | Rovi Fauzan Akbar">
+  <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
+
+  <div class="case-header">
+    <h1>🧩 bina-library & api-client-library</h1>
+    <p class="hero-tagline">Membangun Fondasi Platform Internal</p>
+  </div>
+
+  <div class="callout gray">
+    <strong>Ringkasan:</strong> Membangun dua library internal — bina-library
+    dan api-client-library — yang jadi fondasi standar untuk observability,
+    audit trail, dan komunikasi antar-service. bina-library sudah diadopsi
+    oleh 12+ service produksi lain di Bank Ina.
+  </div>
+
+  <h2>Masalah</h2>
+  <p>
+    Sebelum ada library ini, tiap service cenderung menulis ulang hal yang
+    sama: setup tracing manual, boilerplate baca raw body dan
+    <code>json.Unmarshal</code> di tiap controller, format log yang tidak
+    konsisten antar service, dan tidak ada standar untuk menyimpan audit
+    payload. Semakin banyak service baru dibuat, semakin besar risiko
+    implementasi observability dan audit jadi tidak konsisten — atau lebih
+    buruk, terlewat sama sekali di beberapa service.
+  </p>
+
+  <h2>Solusi: bina-library</h2>
+  <p>
+    Library fondasi yang dipakai sebagai base code semua service. Cakupannya
+    luas — bukan cuma wrapper, tapi juga modul siap pakai untuk auth, cache,
+    database, gateway, HSM (kriptografi), pub/sub, SFTP, storage, hingga
+    BigQuery. Bagian yang paling berdampak ke standardisasi:
+  </p>
+  <ul>
+    <li>
+      <strong><code>server_run</code></strong> (REST & gRPC) — begitu server
+      dijalankan, setiap request masuk otomatis tercatat di tracing, metric,
+      dan audit payload ke Firestore, tanpa developer perlu menulis
+      boilerplate itu di tiap service baru.
+    </li>
+    <li>
+      <strong><code>generic_controller</code></strong> (REST & gRPC) —
+      memangkas kode berulang seperti membaca raw body,
+      <code>json.Unmarshal</code>, dan logging jadi satu pemanggilan fungsi.
+    </li>
+    <li>
+      <strong><code>otel_wrapper</code></strong> — standardisasi
+      instrumentasi OpenTelemetry di seluruh service, supaya tracing dan
+      metric selalu konsisten formatnya.
+    </li>
+    <li>
+      Modul pendukung lain: <code>auth</code>, <code>cache</code>,
+      <code>database</code>, <code>firestore_db</code>, <code>logger</code>,
+      <code>tracing</code>, <code>mapper</code>, <code>validation</code>,
+      <code>pub_sub</code>, <code>gateway</code>, <code>hsm</code>.
+    </li>
+  </ul>
+
+  <h2>Solusi: api-client-library</h2>
+  <p>
+    Client terpusat untuk memanggil service atau domain (pod) lain. Setiap
+    request keluar otomatis mengikuti standar yang sama: audit payload ke
+    Firestore, logging, dan tracing — developer tinggal memanggil fungsi
+    yang sudah ada, bukan menulis ulang boilerplate komunikasi antar-service.
+    Library ini juga jadi titik kontrol untuk mode switching
+    (real / dummy / simulator) yang dipakai di infrastruktur testing
+    self-service — detail lengkapnya di studi kasus
+    <a href="/case-studies/simulator">Simulator Server & Mode Switching</a>.
+  </p>
+
+  <h2>Adopsi</h2>
+  <p>Diverifikasi langsung dari dependency masing-masing service:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Library</th>
+        <th>Diadopsi oleh</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>bina-library</code></td>
+        <td>
+          12+ service produksi (termasuk exp-bi-gateway, exp-transaction-snap,
+          exp-transfer-partner, exp-account-binding, proc-bifast-transaction,
+          proc-bifast-info, proc-estatement, simulator-server, dan
+          api-client-library sendiri)
+        </td>
+      </tr>
+      <tr>
+        <td><code>api-client-library</code></td>
+        <td>
+          Rollout bertahap — dimulai dari exp-transaction-snap dan
+          proc-bifast-transaction, sebagai bagian dari migrasi standar
+          komunikasi antar-service yang masih berjalan
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Dampak</h2>
+  <ul>
+    <li>
+      Onboarding service baru jadi jauh lebih cepat — developer tinggal
+      pakai wrapper yang sudah ada, bukan membangun observability dan audit
+      dari nol.
+    </li>
+    <li>
+      Konsistensi tracing, metric, dan audit trail terjamin di seluruh
+      service yang mengadopsi, karena instrumentasinya bukan pilihan manual
+      tiap developer, tapi bawaan dari wrapper.
+    </li>
+    <li>
+      Mengurangi duplikasi kode secara signifikan di lapisan boilerplate
+      (parsing request, logging, error handling) yang sebelumnya ditulis
+      ulang di tiap service.
+    </li>
+  </ul>
+
+  <h2>Yang Saya Pelajari</h2>
+  <p>
+    Membangun sebuah fitur itu satu hal, tapi membangun fondasi yang dipakai
+    orang lain (developer lain, service lain) adalah level tanggung jawab
+    yang berbeda — API-nya harus cukup jelas dan konsisten supaya adopsinya
+    alami, bukan dipaksakan. Dan karena bina-library sudah dipakai 12+
+    service, sekecil apapun breaking change di sana punya blast radius yang
+    besar — jadi saya belajar untuk jauh lebih hati-hati soal backward
+    compatibility dibanding waktu mengerjakan service tunggal.
+  </p>
+
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      color: var(--text-dim);
+    }
+    th {
+      color: var(--text);
+      background: var(--bg-elevated);
+    }
+  </style>
+</Layout>
