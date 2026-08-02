@@ -1,16 +1,31 @@
 ---
+import Icon from "./Icon.astro";
+
 interface Props {
   href: string;
-  icon: string;
+  icon: "zap" | "package" | "link-2" | "rocket" | "shuffle" | "flask-conical";
   title: string;
   summary: string;
+  metricValue?: string;
+  metricLabel?: string;
+  size?: "featured" | "wide";
 }
 
-const { href, icon, title, summary } = Astro.props;
+const { href, icon, title, summary, metricValue, metricLabel, size } =
+  Astro.props;
+const sizeClass = size ? `case-card--${size}` : "";
 ---
 
-<a class="case-card" href={href}>
-  <span class="icon">{icon}</span>
+<a class={`case-card reveal ${sizeClass}`} href={href}>
+  <span class="case-card-icon"><Icon name={icon} /></span>
+  {
+    metricValue && (
+      <div class="case-metric">
+        <span class="metric-value">{metricValue}</span>
+        <span class="metric-label">{metricLabel}</span>
+      </div>
+    )
+  }
   <h3>{title}</h3>
   <p>{summary}</p>
 </a>

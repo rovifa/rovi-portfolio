@@ -5,42 +5,48 @@ import CaseStudyCard from "../components/CaseStudyCard.astro";
 const caseStudies = [
   {
     href: "/case-studies/bifast",
-    icon: "⚡",
+    icon: "zap",
     title: "Revamp BI-FAST — Bank Ina Perdana",
     summary:
       "Revamp menyeluruh layanan BI-FAST secara mandiri — throughput naik di atas 100 TPS, latency & error rate turun drastis.",
+    metricValue: "100+",
+    metricLabel: "TPS throughput",
+    size: "featured",
   },
   {
     href: "/case-studies/platform-library",
-    icon: "🧩",
+    icon: "package",
     title: "bina-library & api-client-library",
     summary:
       "Membangun fondasi platform internal yang diadopsi 12+ service produksi di Bank Ina.",
+    metricValue: "12+",
+    metricLabel: "Service produksi",
+    size: "wide",
   },
   {
     href: "/case-studies/mambu-estatement",
-    icon: "🔗",
+    icon: "link-2",
     title: "Sinkronisasi Data Mambu & eStatement",
     summary:
       "Menutup celah data antara sistem internal dan core banking Mambu, lalu membangun fitur eStatement & SPT.",
   },
   {
     href: "/case-studies/ottodigital",
-    icon: "🚀",
+    icon: "rocket",
     title: "Dari Nol ke Go, lalu Memimpin Sistem Pembayaran",
     summary:
       "Belajar Go dari nol di OttoDigital, dipercaya pegang VA Gateway, lalu memimpin tim kecil.",
   },
   {
     href: "/case-studies/simulator",
-    icon: "🎭",
+    icon: "shuffle",
     title: "Simulator Server & Mode Switching",
     summary:
       "Infrastruktur testing self-service supaya QA/PM bisa simulasikan kegagalan partner tanpa bergantung developer.",
   },
   {
     href: "/case-studies/rag",
-    icon: "🧪",
+    icon: "flask-conical",
     title: "RAG untuk Otomasi Development Workflow",
     summary:
       "Framework dua tahap (rag-initiate & rag-execute) yang menggerbang AI code generation di balik approval stakeholder.",
@@ -49,7 +55,7 @@ const caseStudies = [
 ---
 
 <Layout title="Rovi Fauzan Akbar — Backend Engineer Portfolio">
-  <section>
+  <section class="hero reveal">
     <h1>Rovi Fauzan Akbar</h1>
     <p class="hero-tagline">
       Saya membangun sistem backend yang menjaga uang tetap bergerak dengan
@@ -57,6 +63,16 @@ const caseStudies = [
       ranah perbankan dan fintech — sistem pembayaran, integrasi core
       banking, dan observability untuk transaksi berskala tinggi.
     </p>
+    <div class="hero-stats">
+      <div class="stat-chip">
+        <span class="stat-value">~8</span>
+        <span class="stat-label">Tahun Pengalaman</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-value">{caseStudies.length}</span>
+        <span class="stat-label">Studi Kasus</span>
+      </div>
+    </div>
     <div class="contact-row">
       <span class="contact-email">
         <a href="mailto:rovifauzan95@gmail.com">rovifauzan95@gmail.com</a>
@@ -89,7 +105,8 @@ const caseStudies = [
 
   <h2 id="pengalaman">Pengalaman Kerja</h2>
 
-  <div class="job">
+  <div class="timeline">
+  <div class="job reveal">
     <div class="job-title">Back End Developer — PT Bank Ina Perdana</div>
     <div class="job-meta">Agustus 2024 – sekarang · Jakarta Selatan</div>
     <div class="tags">
@@ -115,7 +132,7 @@ const caseStudies = [
     </ul>
   </div>
 
-  <div class="job">
+  <div class="job reveal">
     <div class="job-title">Back End Developer — CIMB Niaga</div>
     <div class="job-meta">Mei 2023 – Agustus 2024 · Tangerang Selatan</div>
     <div class="tags">
@@ -140,7 +157,7 @@ const caseStudies = [
     </ul>
   </div>
 
-  <div class="job">
+  <div class="job reveal">
     <div class="job-title">Information Technology Developer — OttoDigital</div>
     <div class="job-meta">Juni 2021 – Mei 2023 · Jakarta</div>
     <div class="tags">
@@ -167,7 +184,7 @@ const caseStudies = [
     </ul>
   </div>
 
-  <div class="job">
+  <div class="job reveal">
     <div class="job-title">
       Full Stack & iOS Developer — PT Autentikasi Garda Indonesia
     </div>
@@ -190,7 +207,7 @@ const caseStudies = [
     </ul>
   </div>
 
-  <div class="job">
+  <div class="job reveal">
     <div class="job-title">Full Stack Developer — PT Mitra Sinerji Teknoindo</div>
     <div class="job-meta">Mei 2019 – April 2020 · Bandung</div>
     <div class="tags">
@@ -208,7 +225,7 @@ const caseStudies = [
     </ul>
   </div>
 
-  <div class="job">
+  <div class="job reveal">
     <div class="job-title">
       Full Stack Developer — PT Autentikasi Garda Indonesia (stint pertama)
     </div>
@@ -225,6 +242,7 @@ const caseStudies = [
       </li>
     </ul>
   </div>
+  </div>
 
   <h2 id="studi-kasus">Studi Kasus</h2>
   <div class="case-grid">
@@ -235,6 +253,9 @@ const caseStudies = [
           icon={cs.icon}
           title={cs.title}
           summary={cs.summary}
+          metricValue={cs.metricValue}
+          metricLabel={cs.metricLabel}
+          size={cs.size}
         />
       ))
     }
