@@ -18,3 +18,8 @@ npm-debug.log*
 
 # macOS
 .DS_Store
+
+# CV build output (photo version contains full home address)
+cv/dist/
+cv/cv-photo.html
+cv/cv-photo.template.html

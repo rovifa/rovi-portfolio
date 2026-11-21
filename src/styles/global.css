@@ -329,6 +329,25 @@ code {
   margin-bottom: 22px;
 }
 
+.hero-role {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 1rem;
+  margin: -4px 0 12px;
+}
+
+.cert-list {
+  padding-left: 1.2em;
+}
+
+.cert-list li {
+  margin-bottom: 10px;
+}
+
+.cert-list a {
+  white-space: nowrap;
+}
+
 .hero-stats {
   display: flex;
   flex-wrap: wrap;

@@ -7,6 +7,17 @@ import profileImg from "../assets/profile.png";
 
 const caseStudies = [
   {
+    href: "/case-studies/bankwide-apm",
+    icon: "activity",
+    title: "Merancang Bank-wide APM — Bank Ina Perdana Tbk",
+    summary:
+      "Memimpin squad APM membangun monitoring seluruh layanan bank (konvensional & digital) dengan arsitektur hybrid Grafana Cloud + on-prem, plus otomasi insiden untuk tim 24/7.",
+    metricValue: "4.000+",
+    metricLabel: "Sensor PRTG + ~50 microservice terpantau",
+    size: "featured",
+    tags: ["Grafana Cloud", "OpenTelemetry", "Activepieces"],
+  },
+  {
     href: "/case-studies/bifast",
     icon: "zap",
     title: "Revamp BI-FAST — Bank Ina Perdana",
@@ -14,8 +25,15 @@ const caseStudies = [
       "Revamp menyeluruh layanan BI-FAST secara mandiri — throughput naik di atas 100 TPS, latency & error rate turun drastis.",
     metricValue: "100+",
     metricLabel: "TPS throughput",
-    size: "featured",
+    size: "wide",
     tags: ["gRPC", "Redis", "OpenTelemetry"],
+  },
+  {
+    href: "/case-studies/mambu-estatement",
+    icon: "link-2",
+    title: "Sinkronisasi Data Mambu & eStatement",
+    summary:
+      "Menutup celah data antara sistem internal dan core banking Mambu, lalu membangun fitur eStatement & SPT.",
   },
   {
     href: "/case-studies/platform-library",
@@ -27,13 +45,6 @@ const caseStudies = [
     metricLabel: "Service produksi",
     size: "wide",
     tags: ["gRPC", "Firestore", "OpenTelemetry"],
-  },
-  {
-    href: "/case-studies/mambu-estatement",
-    icon: "link-2",
-    title: "Sinkronisasi Data Mambu & eStatement",
-    summary:
-      "Menutup celah data antara sistem internal dan core banking Mambu, lalu membangun fitur eStatement & SPT.",
   },
   {
     href: "/case-studies/ottodigital",
@@ -55,26 +66,35 @@ const caseStudies = [
     title: "RAG untuk Otomasi Development Workflow",
     summary:
       "Framework dua tahap (rag-initiate & rag-execute) yang menggerbang AI code generation di balik approval stakeholder.",
+    size: "wide",
   },
 ];
 ---
 
-<Layout title="Rovi Fauzan Akbar — Backend Engineer Portfolio">
+<Layout title="Rovi Fauzan Akbar — APM Squad Lead & Backend Engineer">
   <section class="hero reveal">
     <div class="hero-grid">
       <div class="hero-content">
         <h1>Rovi Fauzan Akbar</h1>
+        <p class="hero-role">
+          Squad Lead APM · Observability &amp; Backend Engineer (Go)
+        </p>
         <p class="hero-tagline">
-          Saya membangun sistem backend yang menjaga uang tetap bergerak
-          dengan aman dan tepat waktu. Selama hampir 8 tahun berkarir, 5
-          tahun terakhir saya fokus di sistem finansial — mulai dari
-          fintech hingga perbankan — mencakup sistem pembayaran, integrasi
-          core banking, dan observability untuk transaksi berskala tinggi.
+          Saya memastikan sistem bank tetap berjalan dan masalahnya
+          ketahuan lebih dulu, sebelum nasabah atau partner merasakannya.
+          Saat ini saya memimpin squad Application Performance Monitoring
+          (APM) di Bank Ina Perdana Tbk untuk monitoring seluruh layanan
+          bank, setelah 8+ tahun membangun sistem backend, 5 tahun terakhir
+          di sistem pembayaran fintech dan perbankan.
         </p>
         <div class="hero-stats">
           <div class="stat-chip">
-            <span class="stat-value">~8</span>
+            <span class="stat-value">8+</span>
             <span class="stat-label">Tahun Pengalaman</span>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-value">4</span>
+            <span class="stat-label">Engineer Dipimpin</span>
           </div>
           <div class="stat-chip">
             <span class="stat-value">{caseStudies.length}</span>
@@ -120,7 +140,7 @@ const caseStudies = [
           </a>
           <span class="location-badge">
             <Icon name="map-pin" />
-            Bandung, Indonesia
+            Tangerang Selatan, Indonesia
           </span>
         </div>
       </div>
@@ -140,21 +160,76 @@ const caseStudies = [
 
   <h2 class="section-title">Ringkasan</h2>
   <p>
-    Backend engineer dengan fokus pada Go, gRPC, Kafka, dan observability
-    (OpenTelemetry, Grafana, Loki, Tempo, Prometheus). Delapan tahun terakhir
-    saya menghabiskan waktu di industri perbankan dan fintech — mulai dari
-    integrasi enterprise banking di CIMB Niaga, memimpin arsitektur backend
-    pembayaran di Ottodigital, hingga saat ini menangani payment & transaction
-    services (termasuk BI-FAST) di Bank Ina Perdana. Saat ini saya juga sedang
-    eksplorasi bagaimana RAG bisa mengotomasi sebagian siklus development.
+    Squad Lead APM yang berangkat dari backend engineering. Saya fokus di
+    observability (OpenTelemetry, Grafana, Prometheus, Loki, Tempo) dan
+    sistem backend berbasis Go, gRPC, dan Kafka. Di Bank Ina Perdana Tbk
+    saya memimpin 4 engineer APM dan memegang monitoring seluruh layanan
+    bank, konvensional maupun digital, dengan arsitektur hybrid Grafana Cloud
+    dan on-prem serta otomasi insiden lewat Activepieces. Sebelumnya saya
+    me-revamp BI-FAST hingga 100+ TPS, membangun library internal yang
+    dipakai 12+ service produksi, memimpin backend pembayaran di OttoDigital,
+    dan menangani integrasi enterprise banking di CIMB Niaga. Di luar kantor
+    saya berbagi ilmu sebagai trainer dan speaker.
   </p>
 
   <h2 id="pengalaman" class="section-title">Pengalaman Kerja</h2>
 
   <div class="timeline">
   <div class="job reveal">
-    <div class="job-title">Back End Developer — PT Bank Ina Perdana</div>
-    <div class="job-meta">Agustus 2024 – sekarang · Jakarta Selatan</div>
+    <div class="job-title">
+      Squad Lead APM (Application Performance Monitoring) — PT Bank Ina Perdana Tbk
+    </div>
+    <div class="job-meta">
+      Juni 2026 – sekarang · Divisi Digital Teknologi · Jakarta Selatan
+    </div>
+    <div class="tags">
+      <span class="tag">Grafana Cloud</span><span class="tag"
+        >OpenTelemetry Collector</span
+      ><span class="tag">Prometheus</span><span class="tag">Loki</span><span
+        class="tag">Tempo</span
+      ><span class="tag">PRTG</span><span class="tag">Activepieces</span>
+    </div>
+    <ul>
+      <li>
+        Memimpin squad 4 engineer APM: rekrutmen, onboarding, assessment,
+        sprint planning bersama PM, sizing, pembagian task, dan code review.
+      </li>
+      <li>
+        Memegang monitoring bank-wide, konvensional dan digital: BI-FAST,
+        core banking, partner, dan channel.
+      </li>
+      <li>
+        Merancang arsitektur hybrid: OTel Collector cloud untuk layanan
+        digital, dan OTel Collector on-prem dengan Prometheus, Loki, dan Tempo
+        self-hosted untuk sistem konvensional. Keduanya disatukan di Grafana
+        Cloud lewat dua datasource.
+      </li>
+      <li>
+        Mengintegrasikan 4.000+ sensor PRTG ke Prometheus dan memantau sekitar
+        50 microservice, dengan alur transaksi BI-FAST, loan, dan SNAP sudah
+        tercakup end-to-end.
+      </li>
+      <li>
+        Membangun otomasi insiden di Activepieces: alert Grafana dikirim ke
+        Google Chat dengan tag PIC, war room Google Meet dan Calendar dibuat
+        otomatis untuk insiden critical, dan setiap insiden production
+        tercatat di Google Sheets.
+      </li>
+      <li>
+        R&amp;D monitoring posisi giro BI secara real-time lewat scraping
+        portal CI Hub BI, karena API BI hanya menyediakan data hingga satu
+        jam sebelumnya.
+      </li>
+      <li>
+        Masih ikut coding dan membantu tim backend bila diperlukan. Detail di
+        studi kasus Bank-wide APM.
+      </li>
+    </ul>
+  </div>
+
+  <div class="job reveal">
+    <div class="job-title">Back End Developer — PT Bank Ina Perdana Tbk</div>
+    <div class="job-meta">Agustus 2024 – Juni 2026 · Jakarta Selatan</div>
     <div class="tags">
       <span class="tag">Go</span><span class="tag">gRPC</span><span
         class="tag">PostgreSQL</span
@@ -165,7 +240,14 @@ const caseStudies = [
       ><span class="tag">Prometheus</span>
     </div>
     <ul>
-      <li>Memegang penuh revamp BI-FAST — lihat studi kasus di bawah.</li>
+      <li>
+        Memegang penuh revamp BI-FAST: 100+ TPS di hari sibuk, rata-rata
+        ~170rb transaksi per hari. Lihat studi kasus di bawah.
+      </li>
+      <li>
+        Membangun bina-library dan api-client-library, yang diadopsi 12+
+        service produksi, serta simulator-server untuk testing self-service.
+      </li>
       <li>
         RnD integrasi webhook Mambu untuk menyelesaikan masalah data yang
         tidak sinkron antara database transaksi internal dan core banking.
@@ -332,12 +414,33 @@ const caseStudies = [
         >Google Cloud Pub/Sub</span
       >
     </dd>
-    <dt>Observability</dt>
+    <dt>Observability & APM</dt>
     <dd class="tags">
-      <span class="tag">OpenTelemetry</span><span class="tag"
-        >Distributed Tracing</span
-      ><span class="tag">Grafana</span><span class="tag">Jaeger/Tempo</span
-      ><span class="tag">Loki</span><span class="tag">Prometheus</span>
+      <span class="tag">OpenTelemetry (SDK & Collector)</span><span
+        class="tag">Grafana Cloud</span
+      ><span class="tag">Prometheus</span><span class="tag">Loki</span><span
+        class="tag">Tempo</span
+      ><span class="tag">Jaeger</span><span class="tag">PRTG</span><span
+        class="tag">Distributed Tracing</span
+      ><span class="tag">Alerting & Dashboard Design</span><span class="tag"
+        >Hybrid Cloud / On-Prem Monitoring</span
+      >
+    </dd>
+    <dt>Incident & Otomasi</dt>
+    <dd class="tags">
+      <span class="tag">Activepieces</span><span class="tag"
+        >Incident Response & Escalation</span
+      ><span class="tag">Incident Reporting</span><span class="tag"
+        >Google Workspace (Chat, Meet, Calendar)</span
+      ><span class="tag">Web Scraping</span>
+    </dd>
+    <dt>Kepemimpinan</dt>
+    <dd class="tags">
+      <span class="tag">Team Lead (4 engineer)</span><span class="tag"
+        >Rekrutmen & Onboarding</span
+      ><span class="tag">Sprint Planning & Sizing</span><span class="tag"
+        >Code Review</span
+      ><span class="tag">Mentoring</span>
     </dd>
     <dt>Perbankan & Pembayaran</dt>
     <dd class="tags">
@@ -360,6 +463,22 @@ const caseStudies = [
 
   <h2 class="section-title">Pendidikan</h2>
   <p><strong>Sarjana Komputer</strong> — Universitas BSI Bandung (Sep 2014 – Aug 2018)</p>
+
+  <h2 class="section-title">Berbagi Ilmu</h2>
+  <ul class="cert-list">
+    <li>
+      <strong>Speaker — Tech Deep Dive Series Vol. 9: Building High-Performance
+      Cache Systems</strong>, HiColleagues (8 September 2026). Membawakan sesi
+      <em>In-Memory Caching with Redis</em>.
+      <a href="/certificates/hicolleagues-speaker-redis-2026.pdf" target="_blank" rel="noopener">Lihat sertifikat</a>
+    </li>
+    <li>
+      <strong>Trainer — Program Kartu Prakerja, Kelas.com</strong> (Februari
+      2023 – Oktober 2024). Pelatihan <em>Pengembangan Back-End Menggunakan
+      JavaScript dan Node.js</em>.
+      <a href="/certificates/kelas-com-trainer-nodejs.pdf" target="_blank" rel="noopener">Lihat sertifikat</a>
+    </li>
+  </ul>
 
   <h2 class="section-title">Di Luar Kerjaan</h2>
   <p>Game, badminton, musik.</p>

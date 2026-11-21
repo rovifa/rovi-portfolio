@@ -1,0 +1,217 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import StatCard from "../../components/StatCard.astro";
+
+const diagramArsitektur = `flowchart LR
+    subgraph DIG["Layanan Digital (cloud)"]
+        D1["Service Go (EXP / PROC)"] --> LIB["bina-library (instrumentasi OTel)"]
+    end
+    subgraph KON["Sistem Konvensional (on-prem)"]
+        K1["Aplikasi Konvensional"]
+        PRTG["Sensor PRTG (existing)"]
+    end
+
+    LIB --> OCC["OTel Collector (cloud)"]
+    OCC --> GCS["Grafana Cloud Stack (Prometheus / Loki / Tempo)"]
+
+    K1 --> OCP["OTel Collector (on-prem)"]
+    PRTG -->|"Bridge ke format Prometheus"| OCP
+    OCP --> ONP["Self-hosted On-Prem (Prometheus / Loki / Tempo)"]
+
+    GCS --> GF["Grafana Cloud (satu pintu)"]
+    ONP -->|"Datasource kedua"| GF
+    GF --> DASH["Dashboard Bank-wide"]
+    GF --> ALERT["Alert Rules"]`;
+
+const diagramInsiden = `flowchart TD
+    ALERT["Grafana Alert"] -->|"Webhook"| AP["Activepieces"]
+    AP --> PARSE["Olah pesan: service, severity, ringkasan"]
+    PARSE --> GC["Google Chat Space (tag PIC terkait)"]
+    PARSE --> SEV{"Severity?"}
+    SEV -->|"Critical"| MEET["Buat Google Meet + undangan Google Calendar"]
+    SEV -->|"Non-critical"| GC
+    MEET --> GC
+    PARSE --> REP["Laporan Insiden di Google Sheets"]
+    GC --> T247["Tim Monitoring 24/7"]`;
+---
+
+<Layout title="Bank-wide APM — Bank Ina Perdana Tbk | Rovi Fauzan Akbar">
+  <a class="back-link" href="/">&larr; Kembali ke portofolio</a>
+
+  <div class="case-header reveal">
+    <h1><span class="case-icon" aria-hidden="true">📈</span> Merancang Bank-wide APM — Bank Ina Perdana Tbk</h1>
+    <p class="hero-tagline">Squad Lead APM · Divisi Digital Teknologi</p>
+  </div>
+
+  <div class="callout reveal">
+    <strong>Ringkasan:</strong> Memimpin squad APM (4 engineer) untuk
+    membangun monitoring yang mencakup seluruh layanan Bank Ina, baik
+    konvensional maupun digital: BI-FAST, core banking digital dan
+    konvensional, partner, sampai channel. Arsitekturnya hybrid (Grafana
+    Cloud untuk layanan digital, collector on-prem untuk sistem
+    konvensional), dilengkapi otomasi insiden lewat Activepieces untuk tim
+    monitoring 24/7.
+  </div>
+
+  <h2>Masalah</h2>
+  <p>
+    Sebelum ada APM, kami sering terlambat menyadari masalah di production.
+    Tidak jarang partner atau nasabah komplain lebih dulu sebelum tim
+    internal tahu ada insiden. Di sisi lain, lanskap sistemnya heterogen:
+    layanan digital sudah cloud-native (Go, gRPC, OpenTelemetry), sedangkan
+    sistem konvensional berjalan on-prem dan sebagian infrastrukturnya hanya
+    terpantau lewat sensor PRTG yang terpisah dari tooling lain.
+  </p>
+  <p>
+    Tim monitoring 24/7 butuh satu tempat untuk melihat kesehatan seluruh
+    aplikasi bank. Mereka juga butuh alur eskalasi yang jelas setiap kali
+    alert berbunyi, supaya tidak bergantung pada siapa yang kebetulan sedang
+    online.
+  </p>
+
+  <h2>Peran Saya</h2>
+  <p>
+    Sebagai <strong>Squad Lead APM</strong> di Divisi Digital Teknologi, saya
+    memegang tiga hal sekaligus:
+  </p>
+  <ul>
+    <li>
+      <strong>Arsitektur dan R&amp;D:</strong> merancang bagaimana telemetry
+      dari sistem digital dan konvensional dikumpulkan, disimpan, dan
+      ditampilkan, lalu meriset tooling yang tepat sebelum dirollout.
+    </li>
+    <li>
+      <strong>Memimpin tim:</strong> 4 engineer APM. Saya mengurus
+      rekrutmen, onboarding, assessment, sprint planning bersama PM (menilai
+      kelayakan, sizing, pembagian task), dan code review.
+    </li>
+    <li>
+      <strong>Partner tim 24/7:</strong> sebagian besar permintaan datang
+      dari tim monitoring 24/7. Tugas saya membangun dashboard, alert, dan
+      aplikasi pendukung yang memudahkan mereka bekerja.
+    </li>
+  </ul>
+  <p>
+    Saya juga masih ikut coding dan membantu tim backend (BI-FAST dan
+    library internal) bila diperlukan.
+  </p>
+
+  <h2>Arsitektur: Hybrid Cloud &amp; On-Prem</h2>
+  <p>
+    Keputusan utamanya adalah <strong>memisahkan jalur telemetry sesuai asal
+    sistem, tetapi menyatukan tampilannya di satu Grafana</strong>:
+  </p>
+  <ul>
+    <li>
+      <strong>Layanan digital</strong> mengirim metric, log, dan trace lewat
+      <strong>OpenTelemetry Collector di cloud</strong> ke Grafana Cloud
+      (Prometheus, Loki, Tempo). Instrumentasinya sudah terstandar lewat
+      <a href="/case-studies/platform-library">bina-library</a>, jadi service
+      baru otomatis ter-trace sejak hari pertama.
+    </li>
+    <li>
+      <strong>Sistem konvensional</strong> diarahkan ke
+      <strong>OpenTelemetry Collector on-prem</strong> dan disimpan di
+      Prometheus, Loki, dan Tempo yang <strong>self-hosted on-prem</strong>,
+      sehingga datanya tetap di jaringan internal bank.
+    </li>
+    <li>
+      <strong>PRTG ke Prometheus:</strong> sensor PRTG yang sudah ada tidak
+      dibuang. Lebih dari <strong>4.000 sensor</strong> di-bridge ke format
+      Prometheus lewat collector on-prem, sehingga kondisi infrastruktur bisa
+      dilihat berdampingan dengan metric aplikasi.
+    </li>
+    <li>
+      <strong>Grafana Cloud dengan dua datasource</strong> (cloud dan
+      on-prem) sudah berjalan dan menjadi satu pintu bagi tim 24/7, tanpa
+      harus pindah-pindah tool.
+    </li>
+  </ul>
+  <pre class="mermaid">{diagramArsitektur}</pre>
+  <p>
+    Rollout dilakukan bertahap. Saat ini sekitar 50 microservice sudah
+    terpantau, dan alur transaksi yang sudah tercakup end-to-end adalah
+    <strong>BI-FAST, loan, dan SNAP</strong>. Sistem lainnya masih dalam
+    pengembangan, karena tiap service bergantung pada kesiapan tim
+    pemiliknya. Coverage diperluas service demi service, dimulai dari jalur
+    transaksi yang paling kritikal.
+  </p>
+
+  <h2>Otomasi Insiden dengan Activepieces</h2>
+  <p>
+    Alert saja tidak cukup kalau tidak ada yang bergerak. Saya membangun flow
+    di <strong>Activepieces</strong> yang menerima webhook dari Grafana
+    Alerting, lalu:
+  </p>
+  <ol>
+    <li>Mengolah pesan alert menjadi ringkasan yang mudah dibaca: service, severity, dan apa yang terjadi.</li>
+    <li>Mengirimnya ke <strong>Google Chat</strong> dan men-tag PIC yang bersangkutan.</li>
+    <li>Untuk insiden <strong>critical</strong>, otomatis membuat <strong>Google Meet</strong> dan undangan <strong>Google Calendar</strong> sebagai war room.</li>
+    <li>Mencatat <strong>laporan insiden</strong> ke <strong>Google Sheets</strong> untuk setiap insiden production.</li>
+  </ol>
+  <pre class="mermaid">{diagramInsiden}</pre>
+  <p>
+    Flow ini sepenuhnya rule-based dan disesuaikan dengan kebutuhan user
+    (tanpa LLM). Saat ini masih tahap uji coba, dan tim monitoring maupun
+    tim reporting sedang beradaptasi dengan alur barunya.
+  </p>
+
+  <h2>R&amp;D Pendukung</h2>
+  <ul>
+    <li>
+      <strong>Monitoring giro BI mendekati real-time:</strong> API Bank
+      Indonesia hanya menyediakan data posisi giro hingga satu jam
+      sebelumnya. Untuk menutup jeda itu, saya membangun scraper ke portal CI
+      Hub BI agar posisi giro bisa dipantau secara real-time.
+    </li>
+    <li>
+      <strong>Standar instrumentasi:</strong> bina-library dan
+      api-client-library (beserta
+      <a href="/case-studies/simulator">simulator-server</a>) menjadi
+      fondasi agar metric, log, dan trace dari layanan digital seragam.
+    </li>
+    <li>
+      <strong>Praktik monitoring yang proper:</strong> riset berkelanjutan
+      soal desain metric, tracing, dan logging, termasuk dashboard dan alert
+      seperti apa yang benar-benar membantu tim 24/7 dan bukan sekadar
+      menambah noise.
+    </li>
+  </ul>
+
+  <h2>Hasil</h2>
+  <div class="stat-grid reveal">
+    <StatCard value="4.000+" label="Sensor PRTG terintegrasi" />
+    <StatCard value="~50" label="Microservice terpantau" />
+    <StatCard value="3" label="Alur transaksi end-to-end (BI-FAST, loan, SNAP)" />
+    <StatCard value="4" label="Engineer APM dipimpin" />
+  </div>
+  <ul>
+    <li>
+      Insiden mulai terdeteksi di tahap awal, sehingga tim bisa bertindak
+      sebelum dampaknya meluas. Sebelumnya, partner atau nasabah sering
+      komplain lebih dulu.
+    </li>
+    <li>
+      Tim 24/7 punya satu pintu (Grafana) untuk sistem digital dan
+      konvensional, ditambah alur eskalasi otomatis ke Google Chat dan war
+      room.
+    </li>
+  </ul>
+  <p>
+    APM ini baru berjalan beberapa bulan dan rollout-nya bergantung pada
+    banyak tim, jadi metrik seperti MTTD dan MTTR belum diukur secara formal.
+    Bagian ini akan saya perbarui begitu data tersebut tersedia.
+  </p>
+
+  <h2>Yang Saya Pelajari</h2>
+  <p>
+    Di bank, observability lebih banyak soal koordinasi daripada soal tool.
+    Grafana, Loki, Tempo, dan Prometheus bisa dipasang dalam hitungan hari,
+    tetapi membuat setiap tim pemilik service mau dan mampu mengirim
+    telemetry yang benar butuh waktu, standar yang jelas, dan library yang
+    membuat langkah yang benar menjadi langkah yang paling mudah. Arsitektur
+    hybrid juga mengajarkan saya untuk menerima batasan yang ada (data
+    konvensional harus tetap on-prem, PRTG sudah terpasang) dan
+    menjembataninya, alih-alih memaksakan satu solusi seragam.
+  </p>
+</Layout>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rovi Fauzan Akbar - CV</title>
+<style>
+  @page { size: A4; margin: 14mm 15mm 14mm 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: Calibri, "Segoe UI", Arial, sans-serif; font-size: 10.3pt; line-height: 1.38; color: #1f2328; margin: 0; }
+  h1 { font-size: 21pt; margin: 0; letter-spacing: .3px; }
+  .headline { font-size: 11.5pt; font-weight: 600; color: #1f4e79; margin: 2px 0 5px; }
+  .contact { font-size: 9.6pt; color: #333; }
+  .contact a { color: inherit; text-decoration: none; }
+  h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 1px; color: #1f4e79; border-bottom: 1.2px solid #1f4e79; padding-bottom: 2px; margin: 13px 0 6px; }
+  .company { font-weight: 700; font-size: 10.8pt; margin-top: 8px; }
+  .role { display: flex; justify-content: space-between; gap: 12px; margin-top: 3px; }
+  .role .title { font-weight: 600; font-style: italic; }
+  .role .date { white-space: nowrap; color: #333; }
+  .stack { font-size: 9.4pt; color: #444; margin: 1px 0 2px; }
+  ul { margin: 2px 0 4px; padding-left: 16px; }
+  li { margin: 1.5px 0; }
+  p { margin: 3px 0; }
+  .skills p { margin: 2px 0; }
+  .job { break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<h1>Rovi Fauzan Akbar</h1>
+<div class="headline">Squad Lead, Application Performance Monitoring (APM) | Observability &amp; Backend Engineer (Go)</div>
+<div class="contact">
+  Pondok Aren, Tangerang Selatan, Banten 15223 &nbsp;|&nbsp; +62 855-2383-6730 &nbsp;|&nbsp; rovifauzan95@gmail.com<br>
+  linkedin.com/in/rovi-fauzan-akbar &nbsp;|&nbsp; Portfolio: rovi-portfolio.vercel.app
+</div>
+
+<h2>Summary</h2>
+<p>
+  APM squad lead and backend engineer with 8+ years of experience, the last 5 in fintech and banking payment systems.
+  Leads a team of 4 engineers that owns bank-wide monitoring at PT Bank Ina Perdana Tbk, covering conventional and
+  digital banking services (4,000+ infrastructure sensors, ~50 microservices) on a hybrid Grafana Cloud and on-premises OpenTelemetry stack, with automated incident
+  escalation for the 24/7 monitoring team. Hands-on in Go, gRPC, and Kafka: revamped the BI-FAST service to 100+ TPS
+  and built internal libraries adopted by 12+ production services. Conference speaker and former Kartu Prakerja trainer.
+</p>
+
+<h2>Experience</h2>
+
+<div class="company">PT Bank Ina Perdana Tbk &mdash; Jakarta Selatan</div>
+
+<div class="job">
+<div class="role"><span class="title">Squad Lead, Application Performance Monitoring (APM) &middot; Digital Technology Division</span><span class="date">Jun 2026 &ndash; Present</span></div>
+<div class="stack"><b>Stack:</b> Grafana Cloud, OpenTelemetry Collector, Prometheus, Loki, Tempo, PRTG, Activepieces, Google Workspace, Go</div>
+<ul>
+  <li>Lead a squad of 4 APM engineers: hiring, onboarding, technical assessment, sprint planning and sizing with product managers, task allocation, and code review.</li>
+  <li>Own bank-wide monitoring across conventional and digital banking: BI-FAST, digital and conventional core banking, partner integrations, and customer channels.</li>
+  <li>Designed and run a hybrid observability architecture: OpenTelemetry Collector to Grafana Cloud for digital services, and an on-premises Collector with self-hosted Prometheus, Loki, and Tempo for conventional systems, unified in Grafana Cloud through two datasources.</li>
+  <li>Integrated 4,000+ existing PRTG infrastructure sensors into Prometheus and brought ~50 microservices under monitoring, with BI-FAST, loan, and SNAP transaction flows covered end to end.</li>
+  <li>Built incident automation in Activepieces: Grafana alerts are routed to Google Chat with the responsible PIC tagged, critical incidents automatically get a Google Meet war room and Calendar invite, and every production incident is logged to a Google Sheets report.</li>
+  <li>Built near-real-time monitoring of the bank&rsquo;s Bank Indonesia current-account (giro) position by scraping the BI CI Hub portal, closing the one-hour data lag of the official API.</li>
+  <li>Moved incident detection from partner and customer complaints toward proactive alerting, expanding coverage service by service starting with critical transaction paths.</li>
+  <li>Still contribute code and support backend teams (BI-FAST, internal libraries) when needed.</li>
+</ul>
+</div>
+
+<div class="job">
+<div class="role"><span class="title">Back End Developer</span><span class="date">Aug 2024 &ndash; Jun 2026</span></div>
+<div class="stack"><b>Stack:</b> Go, gRPC, PostgreSQL, Kafka, Redis, Google Cloud Pub/Sub, Firestore, OpenTelemetry, Grafana</div>
+<ul>
+  <li>Single-handedly revamped the BI-FAST service end to end, sustaining 100+ TPS on peak days (~170K transactions/day on average) with significantly lower latency and error rates.</li>
+  <li>Built bina-library and api-client-library, internal foundations for observability, audit trail, and service-to-service communication, adopted by 12+ production services.</li>
+  <li>Built a simulator server with mode switching so QA and PMs can simulate partner failures (delay, timeout, custom responses) without developer involvement.</li>
+  <li>Resolved data inconsistencies between the internal transaction database and Mambu core banking through webhook integration; built eStatement and monthly SPT tax reporting.</li>
+  <li>Designed a two-stage RAG workflow that gates AI code generation behind stakeholder-approved requirement documents.</li>
+</ul>
+</div>
+
+<div class="job">
+<div class="company">CIMB Niaga &mdash; Tangerang Selatan</div>
+<div class="role"><span class="title">Back End Developer</span><span class="date">May 2023 &ndash; Aug 2024</span></div>
+<div class="stack"><b>Stack:</b> IBM Integration Bus (IIB), IBM DataPower, IBM BAW, IBM API Connect, SQL</div>
+<ul>
+  <li>Developed and maintained enterprise banking integration services on IBM Integration Bus, DataPower, and BAW.</li>
+  <li>Built API Connect (APIM) integrations exposing internal banking services to external partners.</li>
+  <li>Traced and resolved middleware integration failures to prevent dropped or delayed transactions.</li>
+  <li>Worked with internal teams and partner engineers during integration rollouts and partner onboarding.</li>
+</ul>
+</div>
+
+<div class="job">
+<div class="company">OttoDigital Group &mdash; Jakarta</div>
+<div class="role"><span class="title">Information Technology Developer</span><span class="date">Jun 2021 &ndash; May 2023</span></div>
+<div class="stack"><b>Stack:</b> Go, gRPC, Kafka, PostgreSQL, MySQL, Redis, Docker, OpenTelemetry, Grafana</div>
+<ul>
+  <li>Learned Go from scratch and became productive in production within 2&ndash;3 weeks; entrusted with Virtual Account (VA) Gateway transactions.</li>
+  <li>Led backend development for payment systems and helped build the Bank Ina application.</li>
+  <li>Set up OpenTelemetry and Grafana as the team&rsquo;s standard for diagnosing production issues.</li>
+  <li>Implemented retries, idempotency, and failure recovery to prevent duplicate or lost transactions.</li>
+  <li>Mentored 1&ndash;5 junior engineers through code review and backend design decisions.</li>
+</ul>
+</div>
+
+<div class="job">
+<div class="company">PT Autentikasi Garda Indonesia &mdash; Bandung</div>
+<div class="role"><span class="title">Full Stack &amp; iOS Developer</span><span class="date">Apr 2020 &ndash; Jun 2021</span></div>
+<ul>
+  <li>Self-taught iOS and built a native SwiftUI app end to end; developed Laravel/PHP backend services for an e-commerce platform.</li>
+  <li>Shipped customer-facing features across web and mobile and fixed production bugs reported by support.</li>
+</ul>
+<div class="role"><span class="title">Full Stack Developer</span><span class="date">May 2018 &ndash; May 2019</span></div>
+<ul>
+  <li>Built and maintained internal web applications with Laravel and JavaScript; handled production support and bug fixes.</li>
+</ul>
+</div>
+
+<div class="job">
+<div class="company">PT Mitra Sinerji Teknoindo &mdash; Bandung</div>
+<div class="role"><span class="title">Full Stack Developer</span><span class="date">May 2019 &ndash; Apr 2020</span></div>
+<ul>
+  <li>Delivered 10 client projects in one year (PHP, CodeIgniter, MySQL), all accepted by clients, contributing to an estimated 50%+ revenue increase.</li>
+</ul>
+</div>
+
+<div class="job">
+<h2>Speaking &amp; Teaching</h2>
+<ul>
+  <li><b>Speaker</b>, &ldquo;In-Memory Caching with Redis&rdquo;, Tech Deep Dive Series Vol. 9: Building High-Performance Cache Systems, HiColleagues (Sep 2026)</li>
+  <li><b>Trainer</b>, Back-End Development with JavaScript and Node.js, Kartu Prakerja program, Kelas.com (Feb 2023 &ndash; Oct 2024)</li>
+</ul>
+</div>
+
+<div class="job">
+<h2>Education</h2>
+<div class="role"><span><b>Bachelor of Computer Science (S.Kom.)</b>, Universitas BSI Bandung</span><span class="date">2014 &ndash; 2018</span></div>
+</div>
+
+<div class="job skills">
+<h2>Skills</h2>
+<p><b>Observability &amp; APM:</b> OpenTelemetry (SDK, Collector), Grafana Cloud, Prometheus, Loki, Tempo, Jaeger, PRTG, distributed tracing, alerting and dashboard design, hybrid cloud/on-prem monitoring</p>
+<p><b>Incident Management &amp; Automation:</b> incident escalation and reporting, Activepieces, Google Workspace automation, web scraping</p>
+<p><b>Backend:</b> Go, gRPC, REST APIs, microservices, clean architecture, system design, Kafka, Google Cloud Pub/Sub, Redis</p>
+<p><b>Data &amp; Infrastructure:</b> PostgreSQL, MySQL, SQL Server, Firestore, Docker, Git</p>
+<p><b>Banking:</b> BI-FAST, core banking integration (Mambu), payment and transaction processing, IBM Integration Bus, API Connect</p>
+<p><b>Leadership:</b> team leadership, hiring and onboarding, sprint planning and sizing, code review, mentoring</p>
+<p><b>Other:</b> PHP (Laravel, CodeIgniter), JavaScript, Node.js, Swift/SwiftUI, RAG workflow design</p>
+</div>
+
+</body>
+</html>
